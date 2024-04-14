@@ -9,9 +9,9 @@
   --spanish-gray: hsl(0, 0%, 60%);
   --sonic-silver: hsl(0, 0%, 47%);
   --eerie-black: hsl(0, 0%, 13%);
-  --salmon-pink: hsl(353, 100%, 78%);
-  --sandy-brown: hsl(29, 90%, 65%);
-  --bittersweet: hsl(0, 100%, 70%);
+  --salmon-pink: #74b9ff;
+  --sandy-brown: #6c5ce7;
+  --bittersweet: #0984e3;
   --ocean-green: hsl(152, 51%, 52%);
   --davys-gray: hsl(0, 0%, 33%);
   --cultured: hsl(0, 0%, 93%);
@@ -846,7 +846,7 @@ body::-webkit-scrollbar-thumb:hover { background: hsl(0, 0%, 70%); }
 }
 
 .banner-title {
-  color: var(--eerie-black);
+  color: white;
   font-size: var(--fs-1);
   text-transform: uppercase;
   line-height: 1;
@@ -2214,7 +2214,7 @@ footer {
 
   .banner-text {
     display: block;
-    color: var(--sonic-silver);
+    color: rgb(228, 228, 228);
     font-size: var(--fs-7);
     font-weight: var(--weight-500);
     margin-bottom: 10px;
