@@ -1,3 +1,7 @@
+<?php
+include "config.php";
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -186,7 +190,7 @@
 
         <div class="header-user-actions">
 
-          <button class="action-btn" onclick="location.href='Authentification.html'">
+          <button class="action-btn" onclick="location.href='authentification.php'">
             <ion-icon name="person-outline"></ion-icon>
           </button>
 
@@ -767,7 +771,7 @@
             <div class="category-content-box">
 
               <div class="category-content-flex">
-                <h3 class="category-item-title">Stage</h3>  
+                <h3 class="category-item-title">Stage</h3>
 
                 <p class="category-item-amount">(0)</p>
               </div>
@@ -1131,7 +1135,7 @@
             </ul>
 
           </div>
-<!--
+          <!--
           <div class="product-showcase">
 
             <h3 class="showcase-heading">best sellers</h3>
@@ -1270,7 +1274,7 @@
         <div class="product-box">
 
           <!--
-            - PRODUCT MINIMAL
+            - EVENTS
           -->
 
           <div class="product-minimal">
@@ -1283,197 +1287,202 @@
 
                 <div class="showcase-container">
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/clothes-1.jpg" alt="relaxed short full sleeve t-shirt"
-                        width="70" class="showcase-img">
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Relaxed Short full Sleeve T-Shirt</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Clothes</a>
-
-                      <div class="price-box">
-                        <p class="price">$45.00</p>
-                        <del>$12.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/clothes-2.jpg" alt="girls pink embro design top"
-                        class="showcase-img" width="70">
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Girls pnk Embro design Top</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Clothes</a>
-
-                      <div class="price-box">
-                        <p class="price">$61.00</p>
-                        <del>$9.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/clothes-3.jpg" alt="black floral wrap midi skirt"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Black Floral Wrap Midi Skirt</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Clothes</a>
-
-                      <div class="price-box">
-                        <p class="price">$76.00</p>
-                        <del>$25.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shirt-1.jpg" alt="pure garment dyed cotton shirt"
-                        class="showcase-img" width="70">
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Pure Garment Dyed Cotton Shirt</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Mens Fashion</a>
-
-                      <div class="price-box">
-                        <p class="price">$68.00</p>
-                        <del>$31.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+
+                  <br>
 
                 </div>
 
                 <div class="showcase-container">
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jacket-5.jpg" alt="men yarn fleece full-zip jacket"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">MEN Yarn Fleece Full-Zip Jacket</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Winter wear</a>
-
-                      <div class="price-box">
-                        <p class="price">$61.00</p>
-                        <del>$11.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jacket-1.jpg" alt="mens winter leathers jackets"
-                        class="showcase-img" width="70">
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Mens Winter Leathers Jackets</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Winter wear</a>
-
-                      <div class="price-box">
-                        <p class="price">$32.00</p>
-                        <del>$20.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jacket-3.jpg" alt="mens winter leathers jackets"
-                        class="showcase-img" width="70">
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Mens Winter Leathers Jackets</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Jackets</a>
-
-                      <div class="price-box">
-                        <p class="price">$50.00</p>
-                        <del>$25.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shorts-1.jpg" alt="better basics french terry sweatshorts"
-                        class="showcase-img" width="70">
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
+                        width="300" class="blog-banner">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Fashion</a>
 
                       <a href="#">
-                        <h4 class="showcase-title">Better Basics French Terry Sweatshorts</h4>
+                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
                       </a>
 
-                      <a href="#" class="showcase-category">Shorts</a>
-
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$10.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
+                      </p>
 
                     </div>
 
@@ -1493,97 +1502,95 @@
 
                 <div class="showcase-container">
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-1.jpg" alt="running & trekking shoes - white"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Running & Trekking Shoes - White</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">Sports</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$49.00</p>
-                        <del>$15.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
+
+                    </div>
+
+                  </div>
+                  <br>
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
+                    </a>
+
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Music</a>
+
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
+
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <br>
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-2.jpg" alt="trekking & running shoes - black"
-                        class="showcase-img" width="70">
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Trekking & Running Shoes - black</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">Sports</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$78.00</p>
-                        <del>$36.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/party-wear-1.jpg" alt="womens party wear shoes"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Womens Party Wear Shoes</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">Party wear</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$94.00</p>
-                        <del>$42.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-3.jpg" alt="sports claw Spectacle shoes"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Sports Claw Spectacle Shoes</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Sports</a>
-
-                      <div class="price-box">
-                        <p class="price">$54.00</p>
-                        <del>$65.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
@@ -1593,97 +1600,93 @@
 
                 <div class="showcase-container">
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-6.jpg" alt="air tekking shoes - white"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Air Trekking Shoes - white</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">Sports</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$52.00</p>
-                        <del>$55.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shoe-3.jpg" alt="Boot With Suede Detail" class="showcase-img"
-                        width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Boot With Suede Detail</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">boots</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$30.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
+
+                    </div>
+
+                  </div>
+                  <br>
+                  <div class="blog-card">
+
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
+                    </a>
+
+                    <div class="blog-content">
+
+                      <a href="#" class="blog-category">Shoes</a>
+
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
+
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shoe-1.jpg" alt="Clubbing leather formal wear shoes"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Clubbing Leather Formal Wear shoes</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">formal</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$56.00</p>
-                        <del>$78.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shoe-2.jpg" alt="casual Clubbing brown shoes"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Casual Clubbing Brown shoes</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Casual</a>
-
-                      <div class="price-box">
-                        <p class="price">$50.00</p>
-                        <del>$55.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
@@ -1703,97 +1706,93 @@
 
                 <div class="showcase-container">
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/watch-3.jpg" alt="pocket watch leather pouch"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Pocket Watch Leather Pouch</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">Watches</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$50.00</p>
-                        <del>$34.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jewellery-3.jpg" alt="silver deer heart necklace"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Silver Deer Heart Necklace</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">Jewellery</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$84.00</p>
-                        <del>$30.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/perfume.jpg" alt="titan 100 ml womens perfume"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Titan 100 Ml Womens Perfume</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">Siccajazz Festival</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$42.00</p>
-                        <del>$10.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/belt.jpg" alt="Clubbing leather reversible belt"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Clubbing Leather Reversible Belt</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">Belt</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$24.00</p>
-                        <del>$10.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
@@ -1803,97 +1802,93 @@
 
                 <div class="showcase-container">
 
-                  <div class="showcase">
+                  <div class="blog-card">
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jewellery-2.jpg" alt="platinum zircon classic ring"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">platinum Zircon Classic Ring</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">jewellery</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$62.00</p>
-                        <del>$65.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/watch-1.jpg" alt="smart watche vital plus" class="showcase-img"
-                        width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Smart watche Vital Plus</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">Watches</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$56.00</p>
-                        <del>$78.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shampoo.jpg" alt="shampoo conditioner packs"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">shampoo conditioner packs</h4>
-                      </a>
+                      <a href="#" class="blog-category">Shoes</a>
 
-                      <a href="#" class="showcase-category">cosmetics</a>
+                      <h3>
+                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$30.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
+                      </p>
 
                     </div>
 
                   </div>
+                  <br>
+                  <div class="blog-card">
 
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jewellery-1.jpg" alt="rose gold peacock earrings"
-                        class="showcase-img" width="70">
+                    <a href="#">
+                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
+                        class="blog-banner" width="300">
                     </a>
 
-                    <div class="showcase-content">
+                    <div class="blog-content">
 
-                      <a href="#">
-                        <h4 class="showcase-title">Rose Gold Peacock Earrings</h4>
-                      </a>
+                      <a href="#" class="blog-category">Music</a>
 
-                      <a href="#" class="showcase-category">jewellery</a>
+                      <h3>
+                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
+                      </h3>
 
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$30.00</del>
-                      </div>
+                      <p class="blog-meta">
+                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
+                      </p>
 
                     </div>
 
