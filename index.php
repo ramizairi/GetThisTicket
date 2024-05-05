@@ -1,5 +1,7 @@
 <?php
-include "config.php";
+session_start();
+
+include "connection.php";
 
 ?>
 <!DOCTYPE html>
@@ -26,13 +28,11 @@ include "config.php";
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
-
 
   <div class="overlay" data-overlay></div>
 
@@ -171,44 +171,56 @@ include "config.php";
     </div>
 
     <div class="header-main">
-
       <div class="container">
-
         <a href="index.html" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
           Get This Ticket
         </a>
-
         <div class="header-search-container">
-
           <input type="search" name="search" class="search-field" placeholder="Search...">
-
           <button class="search-btn">
             <ion-icon name="search-outline"></ion-icon>
           </button>
-
         </div>
-
         <div class="header-user-actions">
-
-          <button class="action-btn" onclick="location.href='authentification.php'">
-            <ion-icon name="person-outline"></ion-icon>
-          </button>
-
+          <?php
+          // Check if the user is logged in
+          if (isset($_SESSION['user_id'])) {
+            $user_id = $_SESSION['user_id'];
+            $query = "SELECT usertype FROM users WHERE id = $user_id";
+            $result = mysqli_query($conn, $query);
+            if ($result && mysqli_num_rows($result) > 0) {
+              $row = mysqli_fetch_assoc($result);
+              $usertype = $row['usertype'];
+              // Display appropriate icon based on user type
+              if ($usertype == 'client') {
+                echo '<button class="action-btn" onclick="location.href=\'Client/clientDashboard.php\'">
+                    <ion-icon name="bi bi-speedometer2"></ion-icon>
+                  </button>';
+              } elseif ($usertype == 'admin') {
+                echo '<button class="action-btn" onclick="location.href=\'Admin/adminDashboard.php\'">
+                    <ion-icon name="bi bi-speedometer2"></ion-icon>
+                  </button>';
+              }
+            }
+          } else {
+            // User is not logged in, display default icon
+            echo '<button class="action-btn" onclick="location.href=\'authentification.php\'">
+                <ion-icon name="person-outline"></ion-icon>
+              </button>';
+          }
+          ?>
           <button class="action-btn">
             <ion-icon name="heart-outline"></ion-icon>
             <span class="count">0</span>
           </button>
-
           <button class="action-btn">
             <ion-icon name="bag-handle-outline"></ion-icon>
             <span class="count">0</span>
           </button>
-
         </div>
-
       </div>
-
     </div>
+
 
     <nav class="desktop-navigation-menu">
 
@@ -884,8 +896,7 @@ include "config.php";
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/festival.svg" alt="clothes" width="20" height="20"
-                      class="menu-title-img">
+                    <img src="./assets/images/icons/festival.svg" alt="clothes" width="20" height="20" class="menu-title-img">
 
                     <p class="menu-title">Festival</p>
                   </div>
@@ -936,8 +947,7 @@ include "config.php";
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/stage.svg" alt="footwear" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/stage.svg" alt="footwear" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">Stage</p>
                   </div>
@@ -988,8 +998,7 @@ include "config.php";
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/Sport.svg" alt="clothes" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/Sport.svg" alt="clothes" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">Sport</p>
                   </div>
@@ -1033,8 +1042,7 @@ include "config.php";
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/musique.svg" alt="perfume" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/musique.svg" alt="perfume" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">Music</p>
                   </div>
@@ -1085,8 +1093,7 @@ include "config.php";
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/workshop.svg" alt="cosmetics" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/workshop.svg" alt="cosmetics" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">workshop</p>
                   </div>
@@ -1286,622 +1293,43 @@ include "config.php";
               <div class="showcase-wrapper has-scrollbar">
 
                 <div class="showcase-container">
+                  <?php
+                  include 'connection.php';
 
-                  <div class="blog-card">
+                  $sql = "SELECT * FROM event";
+                  $result = $conn->query($sql);
 
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
 
-                    <div class="blog-content">
+                  if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                  ?>
+                      <div class="blog-card">
+                        <a href="#">
+                          <img src="<?php echo $row["image"]; ?>" alt="<?php echo $row["name"]; ?>" width="300" class="blog-banner">
+                        </a>
+                        <div class="blog-content">
+                          <a href="#" class="blog-category"><?php echo $row["category"]; ?></a>
+                          <a href="#">
+                            <h3 class="blog-title"><?php echo $row["name"]; ?></h3>
+                          </a>
+                          <p class="blog-meta">By <cite>Admin</cite> / <time datetime="<?php echo $row["date"]; ?>"><?php echo $row["date"]; ?></time></p>
+                        </div>
+                      </div>
+                      <br>
+                  <?php
+                    }
+                  } else {
+                    echo "0 results";
+                  }
 
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
+                  // Close the database connection
+                  $conn->close();
+                  ?>
 
                 </div>
-
-                <div class="showcase-container">
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                        width="300" class="blog-banner">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Fashion</a>
-
-                      <a href="#">
-                        <h3 class="blog-title">Clothes Retail KPIs 2021 Guide for Clothes Executives.</h3>
-                      </a>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Admin</cite> / <time datetime="2022-04-06">Apr 06, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
               </div>
-
             </div>
-
-            <div class="product-showcase">
-
-              <h2 class="title">Trending</h2>
-
-              <div class="showcase-wrapper  has-scrollbar">
-
-                <div class="showcase-container">
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <br>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div class="showcase-container">
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="product-showcase">
-
-              <h2 class="title">Top Rated</h2>
-
-              <div class="showcase-wrapper  has-scrollbar">
-
-                <div class="showcase-container">
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div class="showcase-container">
-
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Shoes</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">EBT vendors: Claim Your Share of SNAP Online Revenue.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Selsa</cite> / <time datetime="2022-02-10">Feb 10, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-                  <br>
-                  <div class="blog-card">
-
-                    <a href="#">
-                      <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                        class="blog-banner" width="300">
-                    </a>
-
-                    <div class="blog-content">
-
-                      <a href="#" class="blog-category">Music</a>
-
-                      <h3>
-                        <a href="#" class="blog-title">Curbside fashion Trends: How to Win the Pickup Battle.</a>
-                      </h3>
-
-                      <p class="blog-meta">
-                        By <cite>Mr Pawar</cite> / <time datetime="2022-03-15">Mar 15, 2022</time>
-                      </p>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
           </div>
-
 
 
           <!--
@@ -1919,8 +1347,7 @@ include "config.php";
                 <div class="showcase">
 
                   <div class="showcase-banner">
-                    <img src="./assets/images/products/shampoo.jpg" alt="shampoo, conditioner & facewash packs"
-                      class="showcase-img">
+                    <img src="./assets/images/products/shampoo.jpg" alt="shampoo, conditioner & facewash packs" class="showcase-img">
                   </div>
 
                   <div class="showcase-content">
@@ -2006,8 +1433,7 @@ include "config.php";
                 <div class="showcase">
 
                   <div class="showcase-banner">
-                    <img src="./assets/images/products/jewellery-1.jpg" alt="Rose Gold diamonds Earring"
-                      class="showcase-img">
+                    <img src="./assets/images/products/jewellery-1.jpg" alt="Rose Gold diamonds Earring" class="showcase-img">
                   </div>
 
                   <div class="showcase-content">
@@ -2100,10 +1526,8 @@ include "config.php";
 
                 <div class="showcase-banner">
 
-                  <img src="./assets/images/products/jacket-3.jpg" alt="Mens Winter Leathers Jackets" width="300"
-                    class="product-img default">
-                  <img src="./assets/images/products/jacket-4.jpg" alt="Mens Winter Leathers Jackets" width="300"
-                    class="product-img hover">
+                  <img src="./assets/images/products/jacket-3.jpg" alt="Mens Winter Leathers Jackets" width="300" class="product-img default">
+                  <img src="./assets/images/products/jacket-4.jpg" alt="Mens Winter Leathers Jackets" width="300" class="product-img hover">
 
                   <p class="showcase-badge">15%</p>
 
@@ -2157,10 +1581,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shirt-1.jpg" alt="Pure Garment Dyed Cotton Shirt"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shirt-2.jpg" alt="Pure Garment Dyed Cotton Shirt"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shirt-1.jpg" alt="Pure Garment Dyed Cotton Shirt" class="product-img default" width="300">
+                  <img src="./assets/images/products/shirt-2.jpg" alt="Pure Garment Dyed Cotton Shirt" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2210,10 +1632,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/jacket-5.jpg" alt="MEN Yarn Fleece Full-Zip Jacket"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/jacket-6.jpg" alt="MEN Yarn Fleece Full-Zip Jacket"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/jacket-5.jpg" alt="MEN Yarn Fleece Full-Zip Jacket" class="product-img default" width="300">
+                  <img src="./assets/images/products/jacket-6.jpg" alt="MEN Yarn Fleece Full-Zip Jacket" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2261,10 +1681,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/clothes-3.jpg" alt="Black Floral Wrap Midi Skirt"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/clothes-4.jpg" alt="Black Floral Wrap Midi Skirt"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/clothes-3.jpg" alt="Black Floral Wrap Midi Skirt" class="product-img default" width="300">
+                  <img src="./assets/images/products/clothes-4.jpg" alt="Black Floral Wrap Midi Skirt" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle pink">new</p>
 
@@ -2314,10 +1732,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shoe-2.jpg" alt="Casual Clubbing Brown shoes"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shoe-2_1.jpg" alt="Casual Clubbing Brown shoes"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shoe-2.jpg" alt="Casual Clubbing Brown shoes" class="product-img default" width="300">
+                  <img src="./assets/images/products/shoe-2_1.jpg" alt="Casual Clubbing Brown shoes" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2365,10 +1781,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/watch-3.jpg" alt="Pocket Watch Leather Pouch"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/watch-4.jpg" alt="Pocket Watch Leather Pouch"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/watch-3.jpg" alt="Pocket Watch Leather Pouch" class="product-img default" width="300">
+                  <img src="./assets/images/products/watch-4.jpg" alt="Pocket Watch Leather Pouch" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2418,10 +1832,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/watch-1.jpg" alt="Smart watche Vital Plus"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/watch-2.jpg" alt="Smart watche Vital Plus"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/watch-1.jpg" alt="Smart watche Vital Plus" class="product-img default" width="300">
+                  <img src="./assets/images/products/watch-2.jpg" alt="Smart watche Vital Plus" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2469,10 +1881,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/party-wear-1.jpg" alt="Womens Party Wear Shoes"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/party-wear-2.jpg" alt="Womens Party Wear Shoes"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/party-wear-1.jpg" alt="Womens Party Wear Shoes" class="product-img default" width="300">
+                  <img src="./assets/images/products/party-wear-2.jpg" alt="Womens Party Wear Shoes" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2522,10 +1932,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/jacket-1.jpg" alt="Mens Winter Leathers Jackets"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/jacket-2.jpg" alt="Mens Winter Leathers Jackets"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/jacket-1.jpg" alt="Mens Winter Leathers Jackets" class="product-img default" width="300">
+                  <img src="./assets/images/products/jacket-2.jpg" alt="Mens Winter Leathers Jackets" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2573,10 +1981,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/sports-2.jpg" alt="Trekking & Running Shoes - black"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/sports-4.jpg" alt="Trekking & Running Shoes - black"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/sports-2.jpg" alt="Trekking & Running Shoes - black" class="product-img default" width="300">
+                  <img src="./assets/images/products/sports-4.jpg" alt="Trekking & Running Shoes - black" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2626,10 +2032,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shoe-1.jpg" alt="Clubbing Leather Formal Wear shoes"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shoe-1_1.jpg" alt="Clubbing Leather Formal Wear shoes"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shoe-1.jpg" alt="Clubbing Leather Formal Wear shoes" class="product-img default" width="300">
+                  <img src="./assets/images/products/shoe-1_1.jpg" alt="Clubbing Leather Formal Wear shoes" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2677,10 +2081,8 @@ include "config.php";
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shorts-1.jpg" alt="Better Basics French Terry Sweatshorts"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shorts-2.jpg" alt="Better Basics French Terry Sweatshorts"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shorts-1.jpg" alt="Better Basics French Terry Sweatshorts" class="product-img default" width="300">
+                  <img src="./assets/images/products/shorts-2.jpg" alt="Better Basics French Terry Sweatshorts" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2761,8 +2163,7 @@ include "config.php";
 
             <div class="testimonial-card">
 
-              <img src="./assets/images/me.jpg" alt="MOHAMED RAMI ZAIRI" class="testimonial-banner" width="80"
-                height="80">
+              <img src="./assets/images/me.jpg" alt="MOHAMED RAMI ZAIRI" class="testimonial-banner" width="80" height="80">
 
               <p class="testimonial-name">Zairi Mohamed Rami</p>
 
@@ -2916,8 +2317,7 @@ include "config.php";
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                width="300" class="blog-banner">
+              <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives" width="300" class="blog-banner">
             </a>
 
             <div class="blog-content">
@@ -2939,8 +2339,7 @@ include "config.php";
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-2.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                class="blog-banner" width="300">
+              <img src="./assets/images/blog-2.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle." class="blog-banner" width="300">
             </a>
 
             <div class="blog-content">
@@ -2962,8 +2361,7 @@ include "config.php";
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                class="blog-banner" width="300">
+              <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue." class="blog-banner" width="300">
             </a>
 
             <div class="blog-content">
@@ -2985,8 +2383,7 @@ include "config.php";
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                class="blog-banner" width="300">
+              <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle." class="blog-banner" width="300">
             </a>
 
             <div class="blog-content">
