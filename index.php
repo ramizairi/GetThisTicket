@@ -186,7 +186,7 @@
 
         <div class="header-user-actions">
 
-          <button class="action-btn" onclick="location.href='Authentification.html'">
+          <button class="action-btn" onclick="location.href='authentification.php'">
             <ion-icon name="person-outline"></ion-icon>
           </button>
 
