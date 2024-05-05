@@ -194,11 +194,11 @@ include "connection.php";
               // Display appropriate icon based on user type
               if ($usertype == 'client') {
                 echo '<button class="action-btn" onclick="location.href=\'Client/clientDashboard.php\'">
-                    <ion-icon name="bi bi-speedometer2"></ion-icon>
+                    <ion-icon name="settings-outline"></ion-icon>
                   </button>';
               } elseif ($usertype == 'admin') {
                 echo '<button class="action-btn" onclick="location.href=\'Admin/adminDashboard.php\'">
-                    <ion-icon name="bi bi-speedometer2"></ion-icon>
+                    <ion-icon name="settings-outline"></ion-icon>
                   </button>';
               }
             }

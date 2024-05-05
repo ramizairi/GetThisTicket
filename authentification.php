@@ -7,6 +7,7 @@ if (isset($_POST['register'])) {
   $username = $_POST['username'];
   $email = $_POST['email'];
   $password = $_POST['password'];
+  $image = isset($_POST['image']) ? $_POST['image'] : null;
 
   // Check if the email already exists
   $check_stmt = $conn->prepare("SELECT * FROM users WHERE email=?");
@@ -15,31 +16,45 @@ if (isset($_POST['register'])) {
   $check_result = $check_stmt->get_result();
 
   if ($check_result->num_rows > 0) {
-    echo "<div class='alert alert-1-warning'>
-            <h3 class='alert-title'>This email is already in use. Please choose another one.</h3>
-            <p class='alert-content'>Get This Ticket</p>
-         </div>";
+      echo json_encode(array("success" => false, "message" => "This email is already in use. Please choose another one."));
   } else {
-    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+      $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $insert_stmt = $conn->prepare("INSERT INTO users (username, email, password) VALUES (?, ?, ?)");
-    if ($insert_stmt) {
-      $insert_stmt->bind_param("sss", $username, $email, $hashed_password);
-      if ($insert_stmt->execute()) {
-        header("Location: index.php");
+      // Upload image to ImgBB
+      $apiKey = "797ca4734aaef465619db415978f2887";
+      $imageData = file_get_contents($_FILES['image']['tmp_name']);
+      $base64Image = base64_encode($imageData);
+
+      $ch = curl_init();
+
+      curl_setopt($ch, CURLOPT_URL, 'https://api.imgbb.com/1/upload?key=' . $apiKey);
+      curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+      curl_setopt($ch, CURLOPT_POST, 1);
+      curl_setopt($ch, CURLOPT_POSTFIELDS, array('image' => $base64Image));
+
+      $response = curl_exec($ch);
+      curl_close($ch);
+
+      $responseData = json_decode($response, true);
+
+      if ($responseData && isset($responseData['data']['url'])) {
+          $imageUrl = $responseData['data']['url'];
+
+          $insert_stmt = $conn->prepare("INSERT INTO users (username, email, password, image) VALUES (?, ?, ?, ?)");
+          if ($insert_stmt) {
+              $insert_stmt->bind_param("ssss", $username, $email, $hashed_password, $imageUrl);
+              if ($insert_stmt->execute()) {
+                  echo "success";
+                  exit;
+              } else {
+                  // Registration failed
+              }
+          } else {
+              // Prepare statement failed
+          }
       } else {
-
-        echo "<div class='alert alert-1-warning'>
-            <h3 class='alert-title'>Registration failed. Please try again later.</h3>
-            <p class='alert-content'>Get This Ticket</p>
-          </div>";
+          // Failed to upload image
       }
-    } else {
-      echo "<div class='alert alert-1-warning'>
-              <h3 class='alert-title'>Prepare statement failed</h3>
-              <p class='alert-content'>. $conn->error .</p>
-            </div>";
-    }
   }
 }
 
@@ -61,21 +76,17 @@ if (isset($_POST['login'])) {
       $_SESSION['email'] = $email;
       $_SESSION['user_id'] = $row['id'];
       $_SESSION['logged_in'] = true;
-      header("Location: index.php"); // Redirect to welcome page after successful login
+      // Login successful
+      exit;
     } else {
-      echo "<div class='alert alert-1-primary'>
-                <h3 class='alert-title'>Welcome back !</h3>
-                <p class='alert-content'>Get This Ticket</p>
-           </div>";
+      // Incorrect password
     }
   } else {
-    echo "<div class='alert alert-1-warning'>
-              <h3 class='alert-title'>Error in login</h3>
-              <p class='alert-content'>Get This Ticket</p>
-         </div>";
+    // User not found
   }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -86,6 +97,8 @@ if (isset($_POST['login'])) {
   <title>SignIn&SignUp</title>
   <link rel="stylesheet" type="text/css" href="assets/css/AuthStyle.css" />
   <script src="https://kit.fontawesome.com/64d58efce2.js" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.5.1.js" integrity="sha256-QWo7LDvxbWT2tbbQ97B53yJnYU3WhH/C8ycbRAkjPDc=" crossorigin="anonymous"></script>
+
 </head>
 
 <body>
@@ -107,8 +120,13 @@ if (isset($_POST['login'])) {
         </form>
 
         <!-- SIGN UP FORM -->
-        <form action="" class="sign-up-form" method="POST">
+        <form action="" class="sign-up-form" method="POST" enctype="multipart/form-data">
           <h2 class="title">Sign Up</h2>
+          <div class="input-field">
+            <i class="fas fa-image"></i>
+            <input type="file" name="image" id="image" accept="image/*" />
+          </div>
+
           <div class="input-field">
             <i class="fas fa-user"></i>
             <input type="text" name="username" placeholder="Username" />
