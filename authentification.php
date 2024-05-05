@@ -59,6 +59,8 @@ if (isset($_POST['login'])) {
       // Password is correct, start a new session
       $_SESSION['username'] = $row['username'];
       $_SESSION['email'] = $email;
+      $_SESSION['user_id'] = $row['id'];
+      $_SESSION['logged_in'] = true;
       header("Location: index.php"); // Redirect to welcome page after successful login
     } else {
       echo "<div class='alert alert-1-primary'>

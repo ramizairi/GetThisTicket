@@ -1,4 +1,6 @@
 <?php
+session_start();
+
 include "connection.php";
 
 ?>
@@ -31,7 +33,6 @@ include "connection.php";
 </head>
 
 <body>
-
 
   <div class="overlay" data-overlay></div>
 
@@ -170,44 +171,56 @@ include "connection.php";
     </div>
 
     <div class="header-main">
-
       <div class="container">
-
         <a href="index.html" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
           Get This Ticket
         </a>
-
         <div class="header-search-container">
-
           <input type="search" name="search" class="search-field" placeholder="Search...">
-
           <button class="search-btn">
             <ion-icon name="search-outline"></ion-icon>
           </button>
-
         </div>
-
         <div class="header-user-actions">
-
-          <button class="action-btn" onclick="location.href='authentification.php'">
-            <ion-icon name="person-outline"></ion-icon>
-          </button>
-
+          <?php
+          // Check if the user is logged in
+          if (isset($_SESSION['user_id'])) {
+            $user_id = $_SESSION['user_id'];
+            $query = "SELECT usertype FROM users WHERE id = $user_id";
+            $result = mysqli_query($conn, $query);
+            if ($result && mysqli_num_rows($result) > 0) {
+              $row = mysqli_fetch_assoc($result);
+              $usertype = $row['usertype'];
+              // Display appropriate icon based on user type
+              if ($usertype == 'client') {
+                echo '<button class="action-btn" onclick="location.href=\'Client/clientDashboard.php\'">
+                    <ion-icon name="bi bi-speedometer2"></ion-icon>
+                  </button>';
+              } elseif ($usertype == 'admin') {
+                echo '<button class="action-btn" onclick="location.href=\'Admin/adminDashboard.php\'">
+                    <ion-icon name="bi bi-speedometer2"></ion-icon>
+                  </button>';
+              }
+            }
+          } else {
+            // User is not logged in, display default icon
+            echo '<button class="action-btn" onclick="location.href=\'authentification.php\'">
+                <ion-icon name="person-outline"></ion-icon>
+              </button>';
+          }
+          ?>
           <button class="action-btn">
             <ion-icon name="heart-outline"></ion-icon>
             <span class="count">0</span>
           </button>
-
           <button class="action-btn">
             <ion-icon name="bag-handle-outline"></ion-icon>
             <span class="count">0</span>
           </button>
-
         </div>
-
       </div>
-
     </div>
+
 
     <nav class="desktop-navigation-menu">
 
@@ -1270,42 +1283,53 @@ include "connection.php";
           <!--
             - EVENTS
           -->
-          <?php
-          include 'connection.php';
 
-          // SQL query to retrieve data from the "event" table
-          $sql = "SELECT * FROM event";
-          $result = $conn->query($sql);
+          <div class="product-minimal">
 
-          // Check if there are any rows returned
-          if ($result->num_rows > 0) {
-            // Output data of each row
-            while ($row = $result->fetch_assoc()) {
-              // Generate HTML for each product
-          ?>
-              <div class="blog-card">
-                <a href="#">
-                  <img src="<?php echo $row["image"]; ?>" alt="<?php echo $row["name"]; ?>" width="100" class="blog-banner">
-                </a>
-                <div class="blog-content">
-                  <a href="#" class="blog-category"><?php echo $row["category"]; ?></a>
-                  <a href="#">
-                    <h3 class="blog-title"><?php echo $row["name"]; ?></h3>
-                  </a>
-                  <p class="blog-meta">By <cite>Admin</cite> / <time datetime="<?php echo $row["date"]; ?>"><?php echo $row["date"]; ?></time></p>
+            <div class="product-showcase">
+
+              <h2 class="title">New Arrivals</h2>
+
+              <div class="showcase-wrapper has-scrollbar">
+
+                <div class="showcase-container">
+                  <?php
+                  include 'connection.php';
+
+                  $sql = "SELECT * FROM event";
+                  $result = $conn->query($sql);
+
+
+                  if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                  ?>
+                      <div class="blog-card">
+                        <a href="#">
+                          <img src="<?php echo $row["image"]; ?>" alt="<?php echo $row["name"]; ?>" width="300" class="blog-banner">
+                        </a>
+                        <div class="blog-content">
+                          <a href="#" class="blog-category"><?php echo $row["category"]; ?></a>
+                          <a href="#">
+                            <h3 class="blog-title"><?php echo $row["name"]; ?></h3>
+                          </a>
+                          <p class="blog-meta">By <cite>Admin</cite> / <time datetime="<?php echo $row["date"]; ?>"><?php echo $row["date"]; ?></time></p>
+                        </div>
+                      </div>
+                      <br>
+                  <?php
+                    }
+                  } else {
+                    echo "0 results";
+                  }
+
+                  // Close the database connection
+                  $conn->close();
+                  ?>
+
                 </div>
               </div>
-              <br>
-          <?php
-            }
-          } else {
-            echo "0 results";
-          }
-
-          // Close the database connection
-          $conn->close();
-          ?>
-
+            </div>
+          </div>
 
 
           <!--
