@@ -21,7 +21,7 @@ include "connection.php";
   <!--
     - custom css link
   -->
-  <link rel="stylesheet" href="./assets/css/style-prefix.css">
+  <link rel="stylesheet" href="assets/css/style-prefix.css">
 
   <!--
     - google font link
@@ -33,7 +33,120 @@ include "connection.php";
 </head>
 
 <body>
+  <script>
+    var opned = false;
 
+    function openChat() {
+      document.getElementById("chatPopup").style.display = "block";
+      opned = true
+    }
+
+    function closeChat() {
+      document.getElementById("chatPopup").style.display = "none";
+      opned = false
+    }
+
+    function checkopned() {
+      if (opned) {
+        closeChat()
+      } else {
+        openChat()
+      }
+    }
+  </script>
+  <style>
+    /* Floating button styles */
+    .button-57 {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      overflow: hidden;
+      border: 1px solid #5c9dff;
+      color: #5c9dff;
+      display: inline-block;
+      font-size: 15px;
+      line-height: 15px;
+      padding: 18px 18px 17px;
+      text-decoration: none;
+      cursor: pointer;
+      background: #fff;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .button-57 span:first-child {
+      position: relative;
+      transition: color 600ms cubic-bezier(0.48, 0, 0.12, 1);
+      z-index: 10;
+    }
+
+    .button-57 span:last-child {
+      color: white;
+      display: block;
+      position: absolute;
+      bottom: 0;
+      transition: all 500ms cubic-bezier(0.48, 0, 0.12, 1);
+      z-index: 100;
+      opacity: 0;
+      top: 50%;
+      left: 50%;
+      transform: translateY(225%) translateX(-50%);
+      height: 14px;
+      line-height: 13px;
+    }
+
+    .button-57:after {
+      content: "";
+      position: absolute;
+      bottom: -50%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      transform-origin: bottom center;
+      transition: transform 600ms cubic-bezier(0.48, 0, 0.12, 1);
+      transform: skewY(9.3deg) scaleY(0);
+      z-index: 50;
+    }
+
+    .button-57:hover:after {
+      transform-origin: bottom center;
+      transform: skewY(9.3deg) scaleY(2);
+    }
+
+    .button-57:hover span:last-child {
+      transform: translateX(-50%) translateY(-100%);
+      opacity: 1;
+      transition: all 900ms cubic-bezier(0.48, 0, 0.12, 1);
+    }
+
+    /* Chat popup styles */
+    .chat-popup {
+      display: none;
+      position: fixed;
+      bottom: 10%;
+      right: 20px;
+      width: 40%;
+      height: 400px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 9998;
+      /* Ensure popup appears above floating button */
+    }
+  </style>
+  <button class="" onclick="">Open Chat</button>
+  <button class="button-57" role="button" onclick="checkopned()"><span class="text" >Chat</span><span>Chat with friends!</span></button>
+  <!-- Chatbot popup -->
+  <div class="chat-popup" id="chatPopup">
+    <div class="chat-body" id="chatBody">
+      <div id="tlkio" data-channel="getthisticket" data-theme="theme--day" style="width:100%;height: 395px;"></div>
+      <script async src="http://tlk.io/embed.js" type="text/javascript"></script>
+    </div>
+  </div>
   <div class="overlay" data-overlay></div>
 
   <!--
@@ -2408,6 +2521,7 @@ include "connection.php";
 
     </div>
 
+
   </main>
 
 
@@ -2708,12 +2822,10 @@ include "connection.php";
 
 
 
-
-
   <!--
     - custom js link
   -->
-  <script src="./assets/js/script.js"></script>
+  <script src="assets/js/script.js"></script>
 
   <!--
     - ionicon link
