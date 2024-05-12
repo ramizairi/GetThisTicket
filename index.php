@@ -138,7 +138,6 @@ include "connection.php";
       /* Ensure popup appears above floating button */
     }
   </style>
-  <button class="" onclick="">Open Chat</button>
   <button class="button-57" role="button" onclick="checkopned()"><span class="text" >Chat</span><span>Chat with friends!</span></button>
   <!-- Chatbot popup -->
   <div class="chat-popup" id="chatPopup">
