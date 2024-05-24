@@ -1,9 +1,48 @@
+<!-- checkout.php -->
+<?php
+include "../../connection.php";
+
+// Function to get event details by ID
+function getEventDetails($conn, $event_id)
+{
+    $sql = "SELECT * FROM event WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $event_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    return $result->fetch_assoc();
+}
+
+$events = [];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
+    $cart_data = json_decode($_POST['cart_data'], true);
+    if (json_last_error() === JSON_ERROR_NONE) {
+        foreach ($cart_data as $item) {
+            $event_id = intval($item['id']);
+            $event_details = getEventDetails($conn, $event_id);
+            if ($event_details) {
+                $event_details['quantity'] = intval($item['quantity']);
+                $events[] = $event_details;
+            }
+        }
+    } else {
+        echo "Invalid cart data.";
+        exit();
+    }
+} else {
+    echo "No cart data provided.";
+    exit();
+}
+
+$conn->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title>Votre panier : Teskerti.Tn - N&deg;1 du E-Ticket en Tunisie.</title>
+    <title>Votre panier</title>
     <meta name="description" content="Concerts, Festivals, Expositions, Sport ▻ R&eacute;servez vos places sur Teskerti ! Le n&deg;1 du E-ticket en Tunisie - Paiement 100% s&eacute;curis&eacute;." />
     <meta name="keywords" content="Teskerti, Concerts, Festivals, Expositions, Sport, R&eacute;server , E-ticket , Tunisie" />
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -20,15 +59,15 @@
 
     <!-- COMMON CSS -->
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css" rel="stylesheet">-->
-    <link href="https://teskerti.tn/assets/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
     <link href="../assets/css/style.css" rel="stylesheet">
     <link href="../assets/css/vendors.css" rel="stylesheet">
 
     <!-- REVOLUTION SLIDER CSS -->
-    <link rel="stylesheet" type="text/css" href="https://teskerti.tn/assets/rev-slider-files/fonts/font-awesome/css/font-awesome.css">
-    <link rel="stylesheet" type="text/css" href="https://teskerti.tn/assets/rev-slider-files/css/settings.css">
-    <link rel="stylesheet" type="text/css" href="https://teskerti.tn/assets/rev-slider-files/css/layers.css">
-    <link rel="stylesheet" type="text/css" href="https://teskerti.tn/assets/rev-slider-files/css/navigation.css">
+    <link rel="stylesheet" type="text/css" href="../assets/fonts/css/font-awesome.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/settings.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/layers.css">
+    <link rel="stylesheet" type="text/css" href="../assets/css/navigation.css">
 
     <!-- CUSTOM CSS -->
     <link href="../assets/css/custom.css" rel="stylesheet">
@@ -149,9 +188,9 @@ Header -->
     <!-- Mobile menu overlay mask -->
 
     <?php
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-        include '..\..\unchangable\header.php';
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    include '..\..\unchangable\header.php';
     ?>
     <style>
         .cart_count_down {
@@ -248,13 +287,13 @@ Header -->
                         <tr id="91f84d6406e599300e29756adc369b5d">
                             <td>
                                 <div class="thumb_cart">
-                                    <img src="https://teskerti.tn/uploads/products/1715090619_dfbe3aacde4eed375526_small.jpg" alt="Image">
+                                    <img src="<?php echo htmlspecialchars($event['image']); ?>" alt="Image">
                                 </div>
-                                <span class="item_cart"><b>DJERBA MUSIC LAND</b>
+                                <span class="item_cart"><b><?php echo htmlspecialchars($event['name']); ?></b>
                                     <br />Pass 3 Days <br />01 Août 2024 à 20:00 </span>
                             </td>
                             <td>
-                                450.000 </td>
+                            <?php echo htmlspecialchars($event['price']); ?> </td>
                             <td>
                                 1.500 </td>
                             <td>
@@ -264,35 +303,10 @@ Header -->
 
                             </td>
                             <td>
-                                <strong class="total_item">451.500</strong>
+                                <strong class="total_item"><?php echo htmlspecialchars($event['price']); ?></strong>
                             </td>
                             <td class="options">
                                 <a data-id="91f84d6406e599300e29756adc369b5d" class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>
-                            </td>
-                        </tr>
-                        <tr id="b4e87cbf250ba68a5ab61e1e843b37ca">
-                            <td>
-                                <div class="thumb_cart">
-                                    <img src="https://teskerti.tn/uploads/products/1715090619_dfbe3aacde4eed375526_small.jpg" alt="Image">
-                                </div>
-                                <span class="item_cart"><b>DJERBA MUSIC LAND</b>
-                                    <br />Pass 4 Days <br />01 Août 2024 à 20:00 </span>
-                            </td>
-                            <td>
-                                500.000 </td>
-                            <td>
-                                1.500 </td>
-                            <td>
-                                <div class="numbers-row" data-id="b4e87cbf250ba68a5ab61e1e843b37ca">
-                                    <input type="text" value="1" class="qty2 form-control">
-                                </div>
-
-                            </td>
-                            <td>
-                                <strong class="total_item">501.500</strong>
-                            </td>
-                            <td class="options">
-                                <a data-id="b4e87cbf250ba68a5ab61e1e843b37ca" class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>
                             </td>
                         </tr>
                     </tbody>
@@ -339,9 +353,9 @@ Header -->
 
 
     <?php
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-        include '..\..\unchangable\footer.php';
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    include '..\..\unchangable\footer.php';
     ?>
 
     <div id="toTop"></div><!-- Back to top button -->
@@ -357,19 +371,11 @@ Header -->
         </form>
     </div><!-- End Search Menu -->
 
-
-    <script>
-        csrfName = 'csrf_tunisia_experiences';
-        csrfCookie = 'csrf_cookie_name';
-        baseUrl = "https://teskerti.tn";
-        var arrInterval = [];
-    </script>
     <!-- Common scripts -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>-->
-    <script src="https://teskerti.tn/assets/js/jquery-3.6.1.min.js"></script>
-
-    <script src="https://teskerti.tn/assets/js/common_scripts_min.js"></script>
-    <script src="https://teskerti.tn/assets/js/fonctions-custom.js"></script>
+    <script src="../../assets/js/jquery-3.6.1.min.js"></script>
+    <script src="../../assets/js/common_scripts_min.js"></script>
+    <script src="../../assets/js/fonctions-custom.js"></script>
 
 
     <script type="text/javascript">
@@ -525,7 +531,7 @@ Header -->
                 $('.ui').addClass('loading');
                 $.ajax({
                     method: "post",
-                    url: "https://teskerti.tn/booking/promo",
+                    url: "promo.php",
                     data: $('#promo-code-form').serialize(),
                     success: function(data) {
                         if (data.error === false) {
@@ -534,16 +540,6 @@ Header -->
                             promo_code_error_state(data.message);
                             $('.ui').removeClass('loading');
                         }
-                        if (data.csrf_token) {
-                            $('[name=' + csrfName + ']').val(data.csrf_token)
-                        } else {
-                            $('[name=' + csrfName + ']').val($.cookie(csrfCookie));
-                        }
-                    },
-                    error: function() {
-                        $('[name=' + csrfName + ']').val($.cookie(csrfCookie));
-                        promo_code_error_state("\n  <div class=\"alert alert-danger\">\n Nous sommes désolé, votre demande n'a pas été envoyé en raison d'un problème technique.\n<\/div>\n");
-                        $('.ui').removeClass('loading');
                     },
                     complete: function() {
                         $('.ui').removeClass('loading');
@@ -556,18 +552,6 @@ Header -->
         })(window.jQuery);
     </script>
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-52687636-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-52687636-1');
-    </script>
 </body>
 
 </html>

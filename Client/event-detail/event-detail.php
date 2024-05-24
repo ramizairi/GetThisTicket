@@ -3,19 +3,73 @@ include "../../connection.php";
 
 if (isset($_GET['id'])) {
     $event_id = $_GET['id'];
+
+    // Prepare and execute the event query
     $sql = "SELECT * FROM event WHERE id = ?";
     $stmt = $conn->prepare($sql);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
     $stmt->bind_param("i", $event_id);
     $stmt->execute();
     $result = $stmt->get_result();
-
     if ($result->num_rows > 0) {
         $event = $result->fetch_assoc();
     } else {
         echo "Event not found.";
         exit();
     }
+    $stmt->close();
 
+    // Prepare and execute the orchestre query
+    $sql2 = "SELECT * FROM orchestre WHERE eventID = ?";
+    $stmt = $conn->prepare($sql2);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param("i", $event_id);
+    $stmt->execute();
+    $result2 = $stmt->get_result();
+    if ($result2->num_rows > 0) {
+        $orchestre = $result2->fetch_assoc();
+    } else {
+        echo "Orchestre not found.";
+        exit();
+    }
+    $stmt->close();
+
+    // Prepare and execute the balcon query
+    $sql3 = "SELECT * FROM balcon WHERE eventID = ?";
+    $stmt = $conn->prepare($sql3);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param("i", $event_id);
+    $stmt->execute();
+    $result3 = $stmt->get_result();
+    if ($result3->num_rows > 0) {
+        $balcon = $result3->fetch_assoc();
+    } else {
+        echo "Balcon not found.";
+        exit();
+    }
+    $stmt->close();
+
+    // Prepare and execute the galerie query
+    $sql4 = "SELECT * FROM galerie WHERE eventID = ?";
+    $stmt = $conn->prepare($sql4);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+    $stmt->bind_param("i", $event_id);
+    $stmt->execute();
+    $result4 = $stmt->get_result();
+    if ($result4->num_rows > 0) {
+        $galerie = $result4->fetch_assoc();
+    } else {
+        echo "Galerie not found.";
+        exit();
+    }
     $stmt->close();
 } else {
     echo "No event ID provided.";
@@ -24,17 +78,19 @@ if (isset($_GET['id'])) {
 
 $conn->close();
 
+// Format the datetime
 $datetime = new DateTime($event['date']);
 $date = $datetime->format('Y-m-d');
-$time = $datetime->format('H');
+$time = $datetime->format('H:i');
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="utf-8">
-    <title><?php echo htmlspecialchars($event['na   me']); ?></title>
+    <title><?php echo htmlspecialchars($event['name']); ?></title>
     <meta name="description" content="" />
     <!-- Favicons-->
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
@@ -151,8 +207,8 @@ Header -->
                 <aside class="col-lg-4">
                     <div class="box_style_1 expose">
                         <h3 class="inner">- BILLETS -</h3>
-                        <form action="../payment/payment.php" id="main-ticket-form" method="post" accept-charset="utf-8">
-                            <input type="hidden" name="product_id" value="853">
+                        <form id="main-ticket-form" method="post" accept-charset="utf-8">
+                            <input type="hidden" name="product_id" id="product_id" value="<?php echo htmlspecialchars($event['id']); ?>">
                             <div class="row">
                                 <div class="col-6">
                                     <div class="form-group">
@@ -161,18 +217,17 @@ Header -->
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
-                                        <label><b><?php echo htmlspecialchars($event['orchestre']); ?> <sup>TND</sup></b></label>
+                                        <label><b><?php echo htmlspecialchars($orchestre['price']); ?> <sup>TND</sup></b></label>
                                     </div>
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
                                         <div class="numbers-row">
-                                            <input type="text" value="0" class="qty2 form-control" data-max="10" name="quantite_2797">
+                                            <input type="text" value="0" class="qty2 form-control" data-max="10" name="quantite_2797" id="quantite_2797">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="row">
                                 <div class="col-6">
@@ -182,18 +237,17 @@ Header -->
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
-                                        <label><b><?php echo htmlspecialchars($event['balcon']); ?> <sup>TND</sup></b></label>
+                                        <label><b><?php echo htmlspecialchars($balcon['price']); ?> <sup>TND</sup></b></label>
                                     </div>
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
                                         <div class="numbers-row">
-                                            <input type="text" value="0" class="qty2 form-control" data-max="10" name="quantite_2797">
+                                            <input type="text" value="0" class="qty2 form-control" data-max="10" name="quantite_2798" id="quantite_2798">
                                         </div>
                                     </div>
                                 </div>
                             </div>
-
 
                             <div class="row">
                                 <div class="col-6">
@@ -203,13 +257,13 @@ Header -->
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
-                                        <label><b><?php echo htmlspecialchars($event['galerie']); ?> <sup>TND</sup></b></label>
+                                        <label><b><?php echo htmlspecialchars($galerie['price']); ?> <sup>TND</sup></b></label>
                                     </div>
                                 </div>
                                 <div class="col-3">
                                     <div class="form-group">
                                         <div class="numbers-row">
-                                            <input type="text" value="0" class="qty2 form-control" data-max="10" name="quantite_2797">
+                                            <input type="text" value="0" class="qty2 form-control" data-max="10" name="quantite_2799" id="quantite_2799">
                                         </div>
                                     </div>
                                 </div>
@@ -217,14 +271,20 @@ Header -->
 
                             <div id="ticket_form_feedback_messages" style="display: none;"></div>
                             <br>
-                            <button class="btn_full" id="ticket_form_submit" type="submit">
-                                <i id="ticket_form_error_flag" class=" icon_error-circle_alt" style="display: none;"></i>
+                            <button class="btn_full" id="ticket_form_submit" type="button">
+                                <i id="ticket_form_error_flag" class="icon_error-circle_alt" style="display: none;"></i>
                                 <i id="ticket_form_processing" class="icon_loading animate-spin" style="display: none;"></i>
-                                Ajouter au panier</button>
-                            <div style="display:none"><label>Fill This Field</label><input type="text" name="honeypot" value="" /></div>
-                        </form> <a class="btn_full_outline" id="ticket_form_validate_command" href="../payment/payment.php" style="display: none;"><i class="icon_bag_alt"></i> Valider ma commande </a>
+                                Ajouter au panier
+                            </button>
+                            <div style="display:none">
+                                <label>Fill This Field</label>
+                                <input type="text" name="honeypot" value="" />
+                            </div>
+                        </form>
+                        <a class="btn_full_outline" id="ticket_form_validate_command" href="checkout.php" style="display: none;">
+                            <i class="icon_bag_alt"></i> Valider ma commande
+                        </a>
                     </div>
-
                 </aside>
                 <div class="col-lg-8" id="single_tour_desc">
                     <div id="single_tour_feat">
@@ -286,40 +346,67 @@ Header -->
     <!-- Common scripts -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>-->
     <!-- Common scripts -->
-    <script src="https://teskerti.tn/assets/js/jquery-3.6.1.min.js"></script>
-    <script src="https://teskerti.tn/assets/js/common_scripts_min.js"></script>
-    <script src="https://teskerti.tn/assets/js/fonctions-custom.js"></script>
+    <script src="../../assets/js/jquery-3.6.1.min.js"></script>
+    <script src="../../assets/js/common_scripts_min.js"></script>
+    <script src="../../assets/js/fonctions-custom.js"></script>
 
-    <script type="text/javascript" src="https://teskerti.tn/assets/js/jquery.cookie.min.js"></script>
+    <script type="text/javascript" src="../../assets/js/jquery.cookie.min.js"></script>
     <script type="text/javascript">
         (function($) {
             function ticket_form_submit_state() {
                 $('#ticket_form_submit').attr('disabled', 'disabled');
-                $('#ticket_form_submit_icon').hide();
+                $('#ticket_form_processing').show();
                 $('#ticket_form_error_flag').hide();
                 $('#ticket_form_validate_command').hide();
                 $('#ticket_form_feedback_messages').hide();
-                $('#ticket_form_processing').show();
             }
 
             function ticket_form_success_state(message) {
                 $('#ticket_form_processing').hide();
                 $('#ticket_form_error_flag').hide();
-                $('#ticket_form_submit_icon').show();
-                $('#ticket_form_validate_command').show();
                 $('#ticket_form_submit').removeAttr('disabled');
+                $('#ticket_form_validate_command').show();
+                $('#ticket_form_feedback_messages').text(message).show();
             }
 
             function ticket_form_error_state(message) {
                 $('#ticket_form_processing').hide();
-                $('#ticket_form_submit_icon').hide();
-                $('#ticket_form_validate_command').hide();
                 $('#ticket_form_error_flag').show();
                 $('#ticket_form_submit').removeAttr('disabled');
+                $('#ticket_form_feedback_messages').text(message).show();
+            }
+
+            function updateCartContent() {
+                // Update cart UI if necessary
+            }
+
+            function updateItemCount() {
+                // Update item count UI if necessary
             }
 
             $(document).on('click', '#ticket_form_submit', function(e) {
                 ticket_form_submit_state();
+
+                // Get product ID and quantities
+                const productId = $('#product_id').val();
+                const quantiteOrchestre = $('#quantite_2797').val();
+                const quantiteBalcon = $('#quantite_2798').val();
+                const quantiteGalerie = $('#quantite_2799').val();
+
+                // Create cart object
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const event = {
+                    id: productId,
+                    orchestre: quantiteOrchestre,
+                    balcon: quantiteBalcon,
+                    galerie: quantiteGalerie
+                };
+
+                // Add event to cart
+                cart.push(event);
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                // Handle form submission via AJAX
                 $.ajax({
                     method: "post",
                     url: "../payment/add.php",
@@ -331,7 +418,7 @@ Header -->
                                 $.notify({
                                     icon: '',
                                     title: "<a href=\"../payment/checkout.php\"><h4>Panier</h4>",
-                                    message: "<figure><img src='https://teskerti.tn/assets/img/add_ticket.png'/></figure><p>" + data.message + "</p></a>"
+                                    message: "<figure><img src='../../assets/images/icons/add_ticket.png'/></figure><p>" + data.message + "</p></a>"
                                 }, {
                                     icon_type: 'image',
                                     type: 'info',
@@ -355,7 +442,7 @@ Header -->
                                 $.notify({
                                     icon: '',
                                     title: "<h4>Erreur</h4>",
-                                    message: "<figure><img src='https://teskerti.tn/assets/img/error.png'/></figure><p>" + data.message + "</p>"
+                                    message: "<figure><img src='../../assets/images/icons/error.png'/></figure><p>" + data.message + "</p>"
                                 }, {
                                     icon_type: 'image',
                                     type: 'info',
@@ -374,37 +461,6 @@ Header -->
                                 });
                             }, 10);
                         }
-                        if (data.csrf_token) {
-                            $('[name=' + csrfName + ']').val(data.csrf_token);
-                        } else {
-                            $('[name=' + csrfName + ']').val($.cookie(csrfCookie));
-                        }
-                    },
-                    error: function() {
-                        $('[name=' + csrfName + ']').val($.cookie(csrfCookie));
-                        ticket_form_error_state("\n  <div class=\"alert alert-danger\">\n Nous sommes désolé, votre demande n'a pas été envoyée en raison d'un problème technique.\n<\/div>\n");
-                        setTimeout(function() {
-                            $.notify({
-                                icon: '',
-                                title: "<h4>Erreur</h4>",
-                                message: "<figure><img src='https://teskerti.tn/assets/img/error.png'></figure> <p>Nous sommes désolé, votre demande n'a pas été envoyée en raison d'un problème technique.</p>"
-                            }, {
-                                icon_type: 'image',
-                                type: 'info',
-                                delay: 500,
-                                timer: 3000,
-                                z_index: 9999,
-                                showProgressbar: false,
-                                placement: {
-                                    from: "top",
-                                    align: "right"
-                                },
-                                animate: {
-                                    enter: 'animated bounceInUp',
-                                    exit: 'animated bounceOutDown'
-                                },
-                            });
-                        }, 10);
                     },
                     complete: function() {
                         $('.qty2').val("0");
@@ -412,8 +468,13 @@ Header -->
                         updateCartContent();
                     }
                 });
+
                 e.preventDefault();
                 return false;
+            });
+
+            $(document).on('click', '#ticket_form_validate_command', function(e) {
+                window.location.href = '../payment/checkout.php';
             });
 
             $(document).on('click', '.btn_map', function(e) {
@@ -431,18 +492,7 @@ Header -->
         })(window.jQuery);
     </script>
 
-    <!-- Global site tag (gtag.js) - Google Analytics -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-52687636-1"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
 
-        function gtag() {
-            dataLayer.push(arguments);
-        }
-        gtag('js', new Date());
-
-        gtag('config', 'UA-52687636-1');
-    </script>
 
     <script type="module" src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@5.5.2/dist/ionicons/ionicons.js"></script>
