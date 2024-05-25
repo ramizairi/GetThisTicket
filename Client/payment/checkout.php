@@ -4,8 +4,24 @@ include "../../connection.php";
 // Function to get event details by ID
 function getEventDetails($conn, $event_id)
 {
-    $sql = "SELECT * FROM event WHERE id = ?";
+    $sql = "SELECT e.id, e.name, e.date, e.image,
+                   o.price AS orchestre_price,
+                   b.price AS balcon_price,
+                   g.price AS galerie_price
+            FROM event e
+            LEFT JOIN orchestre o ON e.orchestre_id = o.id
+            LEFT JOIN balcon b ON e.balcon_id = b.id
+            LEFT JOIN galerie g ON e.galerie_id = g.id
+            WHERE e.id = ?";
+
     $stmt = $conn->prepare($sql);
+
+    if (!$stmt) {
+        // Log SQL error
+        file_put_contents('php://stderr', "SQL Error: " . $conn->error . "\n");
+        return false;
+    }
+
     $stmt->bind_param("i", $event_id);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -17,12 +33,24 @@ $total_amount = 0; // Initialize total amount
 
 // Get the raw POST data
 $post_data = file_get_contents('php://input');
+
+// Debugging: output raw POST data
+file_put_contents('php://stderr', "Raw POST Data: " . $post_data . "\n");
+
+// Decode JSON data
 $decoded_data = json_decode($post_data, true);
 
-if (json_last_error() === JSON_ERROR_NONE && isset($decoded_data['cart_data'])) {
+// Debugging: output decoded data
+file_put_contents('php://stderr', "Decoded Data: " . print_r($decoded_data, true) . "\n");
+
+if (isset($decoded_data['cart_data']) && is_array($decoded_data['cart_data'])) {
     foreach ($decoded_data['cart_data'] as $item) {
         $event_id = intval($item['id']);
         $event_details = getEventDetails($conn, $event_id);
+
+        // Debugging: Check the event details retrieved from the database
+        file_put_contents('php://stderr', "Event Details: " . print_r($event_details, true) . "\n");
+
         if ($event_details) {
             // Calculate total price based on quantities selected
             $total_price = intval($item['orchestre']) * $event_details['orchestre_price'] +
@@ -38,13 +66,20 @@ if (json_last_error() === JSON_ERROR_NONE && isset($decoded_data['cart_data'])) 
             $event_details['galerie_quantity'] = intval($item['galerie']);
             $event_details['total_price'] = $total_price;
             $events[] = $event_details;
-            echo "price is " + $total_price;
+
+            // Debugging: echo total price for each event
+            file_put_contents('php://stderr', "Price is: $total_price\n");
         }
     }
+} else {
+    // Debugging: Log that cart_data is not set or is not an array
+    file_put_contents('php://stderr', "No valid cart_data received\n");
 }
 
 $conn->close();
 ?>
+
+
 
 
 <!DOCTYPE html>
@@ -177,9 +212,9 @@ $conn->close();
 
 <body>
     <?php
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-        include '..\..\unchangable\header.php';
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    include '..\..\unchangable\header.php';
     ?>
     <!--=================================
 Header -->

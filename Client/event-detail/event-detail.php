@@ -146,9 +146,9 @@ Header -->
     <!-- Mobile menu overlay mask -->
 
     <?php
-        error_reporting(E_ALL);
-        ini_set('display_errors', 1);
-        include '..\..\unchangable\header.php';
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    include '..\..\unchangable\header.php';
     ?>
 
     <style>
@@ -388,19 +388,54 @@ Header -->
                 ticket_form_submit_state();
 
                 // Get product ID and quantities
-                const productId = $('#product_id').val();
-                const quantiteOrchestre = $('#quantite_2797').val();
-                const quantiteBalcon = $('#quantite_2798').val();
-                const quantiteGalerie = $('#quantite_2799').val();
+                $(document).ready(function() {
+                    const productId = $('#product_id').val();
+                    const productImage = <?php echo json_encode($event['image']); ?>;
+                    const productImage = <?php echo json_encode($event['image']); ?>;
+                    const productName = <?php echo json_encode($event['name']); ?>;
+                    const productDate = <?php echo json_encode($event['date']); ?>;
+                    const productLocation = <?php echo json_encode($event['location']); ?>;
 
-                // Create cart object
-                let cart = JSON.parse(localStorage.getItem('cart')) || [];
-                const event = {
-                    id: productId,
-                    orchestre: quantiteOrchestre,
-                    balcon: quantiteBalcon,
-                    galerie: quantiteGalerie
-                };
+                    const priceOrchestreU = <?php echo json_encode($orchestre['price']); ?>;
+                    const priceBalconU = <?php echo json_encode($balcon['price']); ?>;
+                    const priceGalerieU = <?php echo json_encode($galerie['price']); ?>;
+
+                    const quantiteOrchestre = $('#quantite_2797').val();
+                    const quantiteBalcon = $('#quantite_2798').val();
+                    const quantiteGalerie = $('#quantite_2799').val();
+
+                    const priceOrchestre = quantiteOrchestre * priceOrchestreU;
+                    const priceBalcon = quantiteBalcon * priceBalconU;
+                    const priceGalerie = quantiteGalerie * priceGalerieU;
+                    const totalPrice = priceOrchestre + priceBalcon + priceGalerie;
+
+                    // Create cart object
+                    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                    const event = {
+                        id: productId,
+                        image:productImage,
+                        name: productName,
+                        date: productDate,
+                        location: productLocation,
+                        Porchestre: priceOrchestreU,
+                        Pbalcon: priceBalconU,
+                        Pgalerie: priceGalerieU,
+                        Qorchestre: quantiteOrchestre,
+                        Qbalcon: quantiteBalcon,
+                        Qgalerie: quantiteGalerie,
+                        totalPrice: totalPrice
+                    };
+
+                    // Add the event to the cart
+                    cart.push(event);
+
+                    // Save the cart back to local storage
+                    localStorage.setItem('cart', JSON.stringify(cart));
+
+                    // Log the event and total price for debugging purposes
+                    console.log(event);
+                    console.log("Total Price: " + totalPrice);
+                });
 
                 // Add event to cart
                 cart.push(event);

@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/../assets/css/style-prefix.css">
+<link rel="stylesheet" href="../../assets/css/style-prefix.css">
 <div class="header-top">
     <div class="container">
         <ul class="header-social-container">
@@ -34,7 +34,7 @@
 </div>
 <div class="header-main">
     <div class="container">
-        <a href="index.html" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
+        <a href="../../index.php" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
             Get This Ticket
         </a>
         <div class="header-search-container">
@@ -66,7 +66,7 @@
                 }
             } else {
                 // User is not logged in, display default icon
-                echo '<button class="action-btn" onclick="window.location.href="../../authentification.php"">
+                echo '<button class="action-btn" onclick="window.location.href="authentification.php"">
                 <ion-icon name="person-outline"></ion-icon>
                 </button>';
             }
