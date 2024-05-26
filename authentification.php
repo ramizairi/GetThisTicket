@@ -82,10 +82,6 @@ if (isset($_SESSION['loggedIn']) && $_SESSION['loggedIn'] === true) {
       <div class="panel left-panel">
         <div class="content">
           <h3>New here?</h3>
-
-          <form action="logout.php" method="post">
-            <button type="submit">Logout</button>
-          </form>
           <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Optio minus natus est.</p>
           <button class="Sbtn transparent" id="sign-up-btn">Sign Up</button>
         </div>
