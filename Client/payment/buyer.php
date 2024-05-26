@@ -1,13 +1,12 @@
 <?php
-// Define your API key and receiver wallet ID
 $apiKey = '665132b74cad1e76d5377df3:3kl8Jz48m39gqeVbmh3NrY5I7UbRIUD';
-$receiverWalletId = '664f2f813b2ed295cd6f7233'; // Replace with your actual receiver wallet ID
+$receiverWalletId = '664f2f813b2ed295cd6f7233';
 
 // Define payment details
 $paymentData = [
     "receiverWalletId" => $receiverWalletId,
     "token" => "USD",
-    "amount" => 10000, // Amount in cents (e.g., $100.00)
+    "amount" => 10000,
     "type" => "immediate",
     "description" => "payment description",
     "acceptedPaymentMethods" => ["wallet", "bank_card", "e-DINAR"],
@@ -26,49 +25,57 @@ $paymentData = [
     "theme" => "light"
 ];
 
-// Convert the payment data to JSON
+
 $jsonData = json_encode($paymentData);
 
-// Initialize cURL
+
 $ch = curl_init();
 
-// Set the URL
+
 curl_setopt($ch, CURLOPT_URL, "https://api.preprod.konnect.network/api/v2/payments/init-payment");
 
-// Set the method to POST
+
 curl_setopt($ch, CURLOPT_POST, 1);
 
-// Set the headers
+
 curl_setopt($ch, CURLOPT_HTTPHEADER, [
     "Content-Type: application/json",
     "x-api-key: $apiKey"
 ]);
 
-// Set the request body
+
 curl_setopt($ch, CURLOPT_POSTFIELDS, $jsonData);
 
-// Return the response instead of printing it
+
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-// Execute the request
+
 $response = curl_exec($ch);
 
-// Close cURL
+
+if ($response === false) {
+    $error = curl_error($ch);
+    curl_close($ch);
+    die("cURL Error: " . $error);
+}
+
+
 curl_close($ch);
 
-// Decode the JSON response
+
 $responseData = json_decode($response, true);
 
-// Check if the request was successful
+
 if (isset($responseData['payUrl'])) {
-    // Redirect the user to the payment URL
+    
     header("Location: " . $responseData['payUrl']);
     exit;
 } else {
-    // Handle the error
+    
     echo "Error initiating payment: " . $response;
 }
 ?>
+
 
 
 

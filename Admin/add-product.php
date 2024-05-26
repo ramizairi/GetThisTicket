@@ -10,23 +10,68 @@ if (!isset($_SESSION['user_id'])) {
     exit(); // Stop further execution
 }
 
-if (isset($_SESSION['profileImage'])) {
-    $profileImage = $_SESSION['profileImage'];
-} else {
-    // Set a default profile image URL if not set
-    $profileImage = "../assets/images/image.png";
-}
+// Handle form submissions for adding event
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['add_event'])) {
+    // Get event details from the form
+    $eventName = isset($_POST['name']) ? mysqli_real_escape_string($conn, $_POST['name']) : '';
+    $eventDate = isset($_POST['date']) ? mysqli_real_escape_string($conn, $_POST['date']) : '';
+    $eventLocation = isset($_POST['location']) ? mysqli_real_escape_string($conn, $_POST['location']) : '';
+    $eventDescription = isset($_POST['description']) ? mysqli_real_escape_string($conn, $_POST['description']) : '';
+    $orchestraPrice = isset($_POST['orchestre']) ? intval($_POST['orchestre']) : 0;
+    $balconyPrice = isset($_POST['balcon']) ? intval($_POST['balcon']) : 0;
+    $galleryPrice = isset($_POST['galerie']) ? intval($_POST['galerie']) : 0;
+    $category = isset($_POST['category']) ? mysqli_real_escape_string($conn, $_POST['category']) : '';
+    
+    // Handle image upload if provided
+    $image = '';
+    if(isset($_FILES['image'])){
+        $image_name = $_FILES['image']['name'];
+        $image_tmp_name = $_FILES['image']['tmp_name'];
+        $image_size = $_FILES['image']['size'];
+        $image_type = $_FILES['image']['type'];
+        $image_extension = strtolower(pathinfo($image_name, PATHINFO_EXTENSION));
+        $allowed_extensions = array("jpg", "jpeg", "png", "gif");
 
-$user_id = $_SESSION['user_id'];
+        if(in_array($image_extension, $allowed_extensions)){
+            $image = uniqid() . '.' . $image_extension;
+            move_uploaded_file($image_tmp_name, "../path_to_upload_folder/" . $image);
+        } else {
+            echo "Invalid image format. Allowed formats: JPG, JPEG, PNG, GIF.";
+            exit();
+        }
+    }
 
-// Fetch users data from the database
-$sql = "SELECT * FROM users";
-$result = mysqli_query($conn, $sql);
-
-if (!$result) {
-    die("Query failed: " . mysqli_error($conn));
+    // Insert event into the event table
+    $insertEventSql = "INSERT INTO event (name, date, location, description, image) VALUES (?, ?, ?, ?, ?)";
+    $insertEventStmt = $conn->prepare($insertEventSql);
+    if ($insertEventStmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+    $insertEventStmt->bind_param("sssss", $eventName, $eventDate, $eventLocation, $eventDescription, $image);
+    if ($insertEventStmt->execute()) {
+        // Get the ID of the newly inserted event
+        $eventId = $insertEventStmt->insert_id;
+        
+        // Insert data into the balcon table
+        $insertBalconSql = "INSERT INTO balcon (event_id, price) VALUES (?, ?)";
+        $insertBalconStmt = $conn->prepare($insertBalconSql);
+        if ($insertBalconStmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+        $insertBalconStmt->bind_param("ii", $eventId, $balconyPrice);
+        if ($insertBalconStmt->execute()) {
+            echo "Event added successfully.";
+        } else {
+            echo "Error adding event: " . $insertBalconStmt->error;
+        }
+        $insertBalconStmt->close();
+    } else {
+        echo "Error adding event: " . $insertEventStmt->error;
+    }
+    $insertEventStmt->close();
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,7 +79,7 @@ if (!$result) {
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Skydash Admin</title>
+    <title>Product Detail</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="assets/vendors/feather/feather.css">
     <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
@@ -42,8 +87,6 @@ if (!$result) {
     <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
@@ -51,8 +94,8 @@ if (!$result) {
 </head>
 
 <body>
+    <!-- Navbar content -->
     <div class="container-scroller">
-        <!-- partial:partials/_navbar.html -->
         <nav class="navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
             <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-start">
                 <a class="navbar-brand brand-logo me-5" href="../index.php">Get This Ticket</a>
@@ -119,7 +162,7 @@ if (!$result) {
                     </li>
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-                            <img src="<?php echo $profileImage; ?>" alt="profile" />
+                            <img src="" alt="profile" />
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <a href="profilesettings.php" class="dropdown-item">
@@ -139,9 +182,7 @@ if (!$result) {
                 </button>
             </div>
         </nav>
-        <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-            <!-- partial:partials/_sidebar.html -->
             <nav class="sidebar sidebar-offcanvas" id="sidebar">
                 <ul class="nav">
                     <li class="nav-item">
@@ -182,47 +223,52 @@ if (!$result) {
                     </li>
                 </ul>
             </nav>
-            <!-- partial -->
             <div class="main-panel">
                 <div class="content-wrapper">
                     <div class="row">
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">Customers table</h4>
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Full Name</th>
-                                                    <th>Username</th>
-                                                    <th>Web Site</th>
-                                                    <th>Phone Number</th>
-                                                    <th>More Info</th> <!-- New column for "More Info" button -->
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                if (mysqli_num_rows($result) > 0) {
-                                                    // Output data of each row
-                                                    while ($row = mysqli_fetch_assoc($result)) {
-                                                        if ($row["usertype"] == "client") {
-                                                            echo "<tr>";
-                                                            echo "<td>" . $row["fullname"] . "</td>";
-                                                            echo "<td>" . $row["username"] . "</td>";
-                                                            echo "<td> <a href='" . $row["website"] . "'>" . $row["website"] . "</a></td>";
-                                                            echo "<td>" . $row["phone"] . "</td>";
-                                                            echo "<td><a href='customers-detail.php?id=" . $row["username"] . "' class='btn btn-primary'>More Info</a></td>";
-                                                            echo "</tr>";
-                                                        }
-                                                    }
-                                                } else {
-                                                    echo "<tr><td colspan='5'>No transactions found</td></tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <h4 class="card-title">Add Event</h4>
+                                    <form method="POST" action="" enctype="multipart/form-data">
+                                        <div class="form-group">
+                                            <label>Name</label>
+                                            <input type="text" class="form-control" name="name">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Date</label>
+                                            <input type="date" class="form-control" name="date">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Location</label>
+                                            <input type="text" class="form-control" name="location">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control" name="description" required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Orchestre</label>
+                                            <input type="number" class="form-control" name="orchestre">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Balcon</label>
+                                            <input type="number" class="form-control" name="balcon">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Galerie</label>
+                                            <input type="number" class="form-control" name="galerie">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Category</label>
+                                            <input type="text" class="form-control" name="category">
+                                        </div>
+                                        <div class="form-group">
+                                            <label>Image</label>
+                                            <input type="file" class="form-control" name="image">
+                                        </div>
+                                        <button type="submit" name="add" class="btn btn-primary">Add event</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

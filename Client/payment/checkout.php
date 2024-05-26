@@ -1,87 +1,3 @@
-<?php
-include "../../connection.php";
-
-// Function to get event details by ID
-function getEventDetails($conn, $event_id)
-{
-    $sql = "SELECT e.id, e.name, e.date, e.image,
-                   o.price AS orchestre_price,
-                   b.price AS balcon_price,
-                   g.price AS galerie_price
-            FROM event e
-            LEFT JOIN orchestre o ON e.orchestre_id = o.id
-            LEFT JOIN balcon b ON e.balcon_id = b.id
-            LEFT JOIN galerie g ON e.galerie_id = g.id
-            WHERE e.id = ?";
-
-    $stmt = $conn->prepare($sql);
-
-    if (!$stmt) {
-        // Log SQL error
-        file_put_contents('php://stderr', "SQL Error: " . $conn->error . "\n");
-        return false;
-    }
-
-    $stmt->bind_param("i", $event_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc();
-}
-
-$events = [];
-$total_amount = 0; // Initialize total amount
-
-// Get the raw POST data
-$post_data = file_get_contents('php://input');
-
-// Debugging: output raw POST data
-file_put_contents('php://stderr', "Raw POST Data: " . $post_data . "\n");
-
-// Decode JSON data
-$decoded_data = json_decode($post_data, true);
-
-// Debugging: output decoded data
-file_put_contents('php://stderr', "Decoded Data: " . print_r($decoded_data, true) . "\n");
-
-if (isset($decoded_data['cart_data']) && is_array($decoded_data['cart_data'])) {
-    foreach ($decoded_data['cart_data'] as $item) {
-        $event_id = intval($item['id']);
-        $event_details = getEventDetails($conn, $event_id);
-
-        // Debugging: Check the event details retrieved from the database
-        file_put_contents('php://stderr', "Event Details: " . print_r($event_details, true) . "\n");
-
-        if ($event_details) {
-            // Calculate total price based on quantities selected
-            $total_price = intval($item['orchestre']) * $event_details['orchestre_price'] +
-                intval($item['balcon']) * $event_details['balcon_price'] +
-                intval($item['galerie']) * $event_details['galerie_price'];
-
-            // Add total price to the overall total amount
-            $total_amount += $total_price;
-
-            // Add event details along with quantities to the events array
-            $event_details['orchestre_quantity'] = intval($item['orchestre']);
-            $event_details['balcon_quantity'] = intval($item['balcon']);
-            $event_details['galerie_quantity'] = intval($item['galerie']);
-            $event_details['total_price'] = $total_price;
-            $events[] = $event_details;
-
-            // Debugging: echo total price for each event
-            file_put_contents('php://stderr', "Price is: $total_price\n");
-        }
-    }
-} else {
-    // Debugging: Log that cart_data is not set or is not an array
-    file_put_contents('php://stderr', "No valid cart_data received\n");
-}
-
-$conn->close();
-?>
-
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -218,6 +134,119 @@ $conn->close();
     ?>
     <!--=================================
 Header -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function updateCartCount() {
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let totalCount = cart.reduce((total, item) => {
+                    return total + (parseInt(item.Qorchestre) || 0) + (parseInt(item.Qbalcon) || 0) + (parseInt(item.Qgalerie) || 0);
+                }, 0);
+
+                document.querySelectorAll('.action-btn .count').forEach(countElement => {
+                    countElement.textContent = totalCount;
+                });
+            }
+
+            function updateCartTable() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const tableBody = document.querySelector('table.cart-list tbody.ui');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                cart.forEach(item => {
+                    const row = document.createElement('tr');
+
+                    const billetCell = document.createElement('td');
+                    billetCell.innerHTML = `
+                    <div class="thumb_cart">
+                        <img src="${item.image}" alt="Image">
+                    </div>
+                    <span class="item_cart"><b>${item.name}</b><br />Le ${item.date}<br />${item.location}</span>
+                `;
+                    row.appendChild(billetCell);
+
+                    const priceCell = document.createElement('td');
+                    priceCell.textContent = `${item.totalPrice} TND`;
+                    row.appendChild(priceCell);
+
+                    const feesCell = document.createElement('td');
+                    feesCell.textContent = "N/A"; // Assuming no fees, modify as needed
+                    row.appendChild(feesCell);
+
+                    const quantityCell = document.createElement('td');
+                    quantityCell.innerHTML = `
+                    Orchestre: ${item.Qorchestre} <br>
+                    Balcon: ${item.Qbalcon} <br>
+                    Galerie: ${item.Qgalerie}
+                `;
+                    row.appendChild(quantityCell);
+
+                    const totalCell = document.createElement('td');
+                    totalCell.textContent = `${item.totalPrice} TND`;
+                    row.appendChild(totalCell);
+
+                    const actionsCell = document.createElement('td');
+                    actionsCell.className = "options";
+                    actionsCell.innerHTML = `<a class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>`;
+                    row.appendChild(actionsCell);
+
+                    tableBody.appendChild(row);
+                });
+            }
+
+            function addToCart() {
+                const productId = document.getElementById('product_id').value;
+                const productImage = <?php echo json_encode($event['image']); ?>;
+                const productName = <?php echo json_encode($event['name']); ?>;
+                const productDate = <?php echo json_encode($event['date']); ?>;
+                const productLocation = <?php echo json_encode($event['location']); ?>;
+
+                const priceOrchestreU = <?php echo json_encode($orchestre['price']); ?>;
+                const priceBalconU = <?php echo json_encode($balcon['price']); ?>;
+                const priceGalerieU = <?php echo json_encode($galerie['price']); ?>;
+
+                const quantiteOrchestre = document.getElementById('quantite_2797').value;
+                const quantiteBalcon = document.getElementById('quantite_2798').value;
+                const quantiteGalerie = document.getElementById('quantite_2799').value;
+
+                const priceOrchestre = quantiteOrchestre * priceOrchestreU;
+                const priceBalcon = quantiteBalcon * priceBalconU;
+                const priceGalerie = quantiteGalerie * priceGalerieU;
+                const totalPrice = priceOrchestre + priceBalcon + priceGalerie;
+
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const event = {
+                    id: productId,
+                    image: productImage,
+                    name: productName,
+                    date: productDate,
+                    location: productLocation,
+                    Porchestre: priceOrchestreU,
+                    Pbalcon: priceBalconU,
+                    Pgalerie: priceGalerieU,
+                    Qorchestre: quantiteOrchestre,
+                    Qbalcon: quantiteBalcon,
+                    Qgalerie: quantiteGalerie,
+                    totalPrice: totalPrice
+                };
+
+                cart.push(event);
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                console.log("Item added to cart: ", event);
+                updateCartCount();
+                updateCartTable();
+            }
+
+            document.getElementById('ticket_form_submit').addEventListener('click', function(e) {
+                e.preventDefault();
+                addToCart();
+            });
+
+            updateCartCount();
+            updateCartTable();
+        });
+    </script>
+
 
     <div id="preloader">
         <div class="sk-spinner sk-spinner-wave">
@@ -325,33 +354,31 @@ Header -->
                         </tr>
                     </thead>
                     <tbody class="ui">
-                        <?php foreach ($events as $event) : ?>
-                            <tr>
-                                <td>
-                                    <div class="thumb_cart">
-                                        <img src="<?php echo htmlspecialchars($event['image']); ?>" alt="Image">
-                                    </div>
-                                    <span class="item_cart"><b><?php echo htmlspecialchars($event['name']); ?></b><br />Le<br /><?php echo htmlspecialchars($event['date']); ?></span>
-                                </td>
-                                <td>
-                                    <?php echo htmlspecialchars($event['price']); ?>
-                                </td>
-                                <td>
-                                    <?php echo htmlspecialchars($event['price']); ?> <!-- Assuming the "FRAIS" is the same as the price -->
-                                </td>
-                                <td>
-                                    Orchestre: <?php echo intval($event['orchestre_quantity']); ?><br>
-                                    Balcon: <?php echo intval($event['balcon_quantity']); ?><br>
-                                    Galerie: <?php echo intval($event['galerie_quantity']); ?>
-                                </td>
-                                <td>
-                                    <?php echo htmlspecialchars($event['total_price']); ?>
-                                </td>
-                                <td class="options">
-                                    <a class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>
-                                </td>
-                            </tr>
-                        <?php endforeach; ?>
+                        <tr>
+                            <td>
+                                <div class="thumb_cart">
+                                    <img src="" alt="Image">
+                                </div>
+                                <span class="item_cart"><b></b><br />Le<br /></span>
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+
+                            </td>
+                            <td>
+                                Orchestre: <br>
+                                Balcon: <br>
+                                Galerie:
+                            </td>
+                            <td>
+
+                            </td>
+                            <td class="options">
+                                <a class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
 

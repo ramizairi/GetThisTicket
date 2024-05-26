@@ -296,11 +296,11 @@ include "connection.php";
 
               // Display appropriate icon based on user type
               if ($usertype == 'client') {
-                echo '<button class="action-btn" onclick="window.location.href=\'../payment/checkout.php\'">
+                echo '<button class="action-btn" onclick="window.location.href=\'client/clientDashboard.php\'">
                   <ion-icon name="settings-outline"></ion-icon>
                   </button>';
               } elseif ($usertype == 'admin') {
-                echo '<button class="action-btn" onclick="window.location.href=\'Admin/adminDashboard.php\'">
+                echo '<button class="action-btn" onclick="window.location.href=\'admin/adminDashboard.php\'">
                   <ion-icon name="settings-outline"></ion-icon>
                   </button>';
               }

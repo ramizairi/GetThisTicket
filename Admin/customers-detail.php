@@ -10,21 +10,83 @@ if (!isset($_SESSION['user_id'])) {
     exit(); // Stop further execution
 }
 
-if (isset($_SESSION['profileImage'])) {
-    $profileImage = $_SESSION['profileImage'];
+// Set a default profile image
+$profileImage = "path/to/default/profile/image.jpg"; // Update this path to your default image
+
+// Fetch user data based on the username passed as a query parameter
+if (isset($_GET['id'])) {
+    $username = mysqli_real_escape_string($conn, $_GET['id']);
+
+    // Fetch user data
+    $sql = "SELECT * FROM users WHERE username='$username'";
+    $result = mysqli_query($conn, $sql);
+
+    if ($result) {
+        $user = mysqli_fetch_assoc($result);
+        // If user has a profile image, use it
+        if (!empty($user['profile_image'])) {
+            $profileImage = $user['profile_image'];
+        }
+    } else {
+        die("Query failed: " . mysqli_error($conn));
+    }
 } else {
-    // Set a default profile image URL if not set
-    $profileImage = "../assets/images/image.png";
+    die("Invalid request.");
 }
 
-$user_id = $_SESSION['user_id'];
+// Handle update operation
+// Handle update operation
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update'])) {
+    $fullname = isset($_POST['fullname']) ? mysqli_real_escape_string($conn, $_POST['fullname']) : '';
+    $new_username = isset($_POST['username']) ? mysqli_real_escape_string($conn, $_POST['username']) : '';
+    $password = isset($_POST['password']) ? mysqli_real_escape_string($conn, $_POST['password']) : '';
+    $email = isset($_POST['email']) ? mysqli_real_escape_string($conn, $_POST['email']) : '';
+    $phone = isset($_POST['phone']) ? mysqli_real_escape_string($conn, $_POST['phone']) : '';
+    $website = isset($_POST['website']) ? mysqli_real_escape_string($conn, $_POST['website']) : '';
+    $about = isset($_POST['about']) ? mysqli_real_escape_string($conn, $_POST['about']) : '';
+    $image = isset($_FILES['image']) ? $_FILES['image'] : null;
 
-// Fetch users data from the database
-$sql = "SELECT * FROM users";
-$result = mysqli_query($conn, $sql);
+    if (!empty($image['name'])) {
+        $target_dir = "uploads/";
+        $target_file = $target_dir . basename($image['name']);
+        move_uploaded_file($image['tmp_name'], $target_file);
+        $profileImage = $target_file;
+    }
 
-if (!$result) {
-    die("Query failed: " . mysqli_error($conn));
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+    $updateSql = "UPDATE users SET 
+                    fullname='$fullname', 
+                    username='$new_username', 
+                    password='$hashed_password', 
+                    email='$email', 
+                    phone='$phone', 
+                    website='$website', 
+                    about='$about', 
+                    profile_image='$profileImage' 
+                  WHERE username='$username'";
+
+    if (mysqli_query($conn, $updateSql)) {
+        echo "User updated successfully.";
+        // Optionally, update the session user_id if username is changed
+        if ($username !== $new_username) {
+            $_SESSION['user_id'] = $new_username;
+        }
+    } else {
+        echo "Error updating user: " . mysqli_error($conn);
+    }
+}
+
+// Handle delete operation
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete'])) {
+    $deleteSql = "DELETE FROM users WHERE username='$username'";
+    if (mysqli_query($conn, $deleteSql)) {
+        echo "User deleted successfully.";
+        header("Location: customers.php"); // Redirect to customers page after deletion
+        exit();
+    } else {
+        echo "Error deleting user: " . mysqli_error($conn);
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -34,7 +96,7 @@ if (!$result) {
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>Skydash Admin</title>
+    <title>Customer Detail</title>
     <!-- plugins:css -->
     <link rel="stylesheet" href="assets/vendors/feather/feather.css">
     <link rel="stylesheet" href="assets/vendors/ti-icons/css/themify-icons.css">
@@ -42,8 +104,6 @@ if (!$result) {
     <link rel="stylesheet" href="assets/vendors/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="assets/vendors/mdi/css/materialdesignicons.min.css">
     <!-- endinject -->
-    <!-- Plugin css for this page -->
-    <!-- End plugin css for this page -->
     <!-- inject:css -->
     <link rel="stylesheet" href="assets/css/style.css">
     <!-- endinject -->
@@ -119,7 +179,7 @@ if (!$result) {
                     </li>
                     <li class="nav-item nav-profile dropdown">
                         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" id="profileDropdown">
-                            <img src="<?php echo $profileImage; ?>" alt="profile" />
+                            <img src="<?php echo htmlspecialchars($profileImage); ?>" alt="profile" />
                         </a>
                         <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                             <a href="profilesettings.php" class="dropdown-item">
@@ -189,40 +249,47 @@ if (!$result) {
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">Customers table</h4>
-                                    <div class="table-responsive">
-                                        <table class="table">
-                                            <thead>
-                                                <tr>
-                                                    <th>Full Name</th>
-                                                    <th>Username</th>
-                                                    <th>Web Site</th>
-                                                    <th>Phone Number</th>
-                                                    <th>More Info</th> <!-- New column for "More Info" button -->
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                <?php
-                                                if (mysqli_num_rows($result) > 0) {
-                                                    // Output data of each row
-                                                    while ($row = mysqli_fetch_assoc($result)) {
-                                                        if ($row["usertype"] == "client") {
-                                                            echo "<tr>";
-                                                            echo "<td>" . $row["fullname"] . "</td>";
-                                                            echo "<td>" . $row["username"] . "</td>";
-                                                            echo "<td> <a href='" . $row["website"] . "'>" . $row["website"] . "</a></td>";
-                                                            echo "<td>" . $row["phone"] . "</td>";
-                                                            echo "<td><a href='customers-detail.php?id=" . $row["username"] . "' class='btn btn-primary'>More Info</a></td>";
-                                                            echo "</tr>";
-                                                        }
-                                                    }
-                                                } else {
-                                                    echo "<tr><td colspan='5'>No transactions found</td></tr>";
-                                                }
-                                                ?>
-                                            </tbody>
-                                        </table>
-                                    </div>
+                                    <h4 class="card-title">Customer Detail</h4>
+                                    <?php if ($user) : ?>
+                                        <form method="POST" action="" enctype="multipart/form-data">
+                                            <div class="form-group">
+                                                <label>Full Name</label>
+                                                <input type="text" class="form-control" name="fullname" value="<?php echo htmlspecialchars($user['fullname']); ?>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Username</label>
+                                                <input type="text" class="form-control" name="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Password</label>
+                                                <input type="password" class="form-control" name="password" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Email</label>
+                                                <input type="email" class="form-control" name="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Phone Number</label>
+                                                <input type="text" class="form-control" name="phone" value="<?php echo htmlspecialchars($user['phone']); ?>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Website</label>
+                                                <input type="text" class="form-control" name="website" value="<?php echo htmlspecialchars($user['website']); ?>" required>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>About</label>
+                                                <textarea class="form-control" name="about" required><?php echo htmlspecialchars($user['about']); ?></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Profile Image</label>
+                                                <input type="file" class="form-control" name="image">
+                                            </div>
+                                            <button type="submit" name="update" class="btn btn-primary">Update</button>
+                                            <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                                        </form>
+                                    <?php else : ?>
+                                        <p>No user found.</p>
+                                    <?php endif; ?>
                                 </div>
                             </div>
                         </div>
