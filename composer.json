@@ -1,0 +1,12 @@
+{
+    "name": "getthisticket/e-ticket.tn",
+    "type": "project",
+    "require": {
+        "guzzlehttp/guzzle": "^7.8"
+    },
+    "authors": [
+        {
+            "name": "ramizairi"
+        }
+    ]
+}
