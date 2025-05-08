@@ -1,3 +1,9 @@
+<?php
+session_start();
+
+include "connection.php";
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,21 +21,131 @@
   <!--
     - custom css link
   -->
-  <link rel="stylesheet" href="./assets/css/style-prefix.css">
+  <link rel="stylesheet" href="assets/css/style-prefix.css">
 
   <!--
     - google font link
   -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap"
-    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 </head>
 
 <body>
+  <script>
+    var opned = false;
 
+    function openChat() {
+      document.getElementById("chatPopup").style.display = "block";
+      opned = true
+    }
 
+    function closeChat() {
+      document.getElementById("chatPopup").style.display = "none";
+      opned = false
+    }
+
+    function checkopned() {
+      if (opned) {
+        closeChat()
+      } else {
+        openChat()
+      }
+    }
+  </script>
+  <style>
+    /* Floating button styles */
+    .button-57 {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      padding: 10px 20px;
+      overflow: hidden;
+      border: 1px solid #5c9dff;
+      color: #5c9dff;
+      display: inline-block;
+      font-size: 15px;
+      line-height: 15px;
+      padding: 18px 18px 17px;
+      text-decoration: none;
+      cursor: pointer;
+      background: #fff;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+    }
+
+    .button-57 span:first-child {
+      position: relative;
+      transition: color 600ms cubic-bezier(0.48, 0, 0.12, 1);
+      z-index: 10;
+    }
+
+    .button-57 span:last-child {
+      color: white;
+      display: block;
+      position: absolute;
+      bottom: 0;
+      transition: all 500ms cubic-bezier(0.48, 0, 0.12, 1);
+      z-index: 100;
+      opacity: 0;
+      top: 50%;
+      left: 50%;
+      transform: translateY(225%) translateX(-50%);
+      height: 14px;
+      line-height: 13px;
+    }
+
+    .button-57:after {
+      content: "";
+      position: absolute;
+      bottom: -50%;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: black;
+      transform-origin: bottom center;
+      transition: transform 600ms cubic-bezier(0.48, 0, 0.12, 1);
+      transform: skewY(9.3deg) scaleY(0);
+      z-index: 50;
+    }
+
+    .button-57:hover:after {
+      transform-origin: bottom center;
+      transform: skewY(9.3deg) scaleY(2);
+    }
+
+    .button-57:hover span:last-child {
+      transform: translateX(-50%) translateY(-100%);
+      opacity: 1;
+      transition: all 900ms cubic-bezier(0.48, 0, 0.12, 1);
+    }
+
+    /* Chat popup styles */
+    .chat-popup {
+      display: none;
+      position: fixed;
+      bottom: 10%;
+      right: 20px;
+      width: 40%;
+      height: 400px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      z-index: 9998;
+      /* Ensure popup appears above floating button */
+    }
+  </style>
+  <button class="button-57" role="button" onclick="checkopned()"><span class="text" >Chat</span><span>Chat with friends!</span></button>
+  <!-- Chatbot popup -->
+  <div class="chat-popup" id="chatPopup">
+    <div class="chat-body" id="chatBody">
+      <div id="tlkio" data-channel="getthisticket" data-theme="theme--day" style="width:100%;height: 395px;"></div>
+      <script async src="http://tlk.io/embed.js" type="text/javascript"></script>
+    </div>
+  </div>
   <div class="overlay" data-overlay></div>
 
   <!--
@@ -167,44 +283,56 @@
     </div>
 
     <div class="header-main">
-
       <div class="container">
-
         <a href="index.html" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
           Get This Ticket
         </a>
-
         <div class="header-search-container">
-
           <input type="search" name="search" class="search-field" placeholder="Search...">
-
           <button class="search-btn">
             <ion-icon name="search-outline"></ion-icon>
           </button>
-
         </div>
-
         <div class="header-user-actions">
-
-          <button class="action-btn" onclick="location.href='Authentification.html'">
-            <ion-icon name="person-outline"></ion-icon>
-          </button>
-
+          <?php
+          // Check if the user is logged in
+          if (isset($_SESSION['user_id'])) {
+            $user_id = $_SESSION['user_id'];
+            $query = "SELECT usertype FROM users WHERE id = $user_id";
+            $result = mysqli_query($conn, $query);
+            if ($result && mysqli_num_rows($result) > 0) {
+              $row = mysqli_fetch_assoc($result);
+              $usertype = $row['usertype'];
+              // Display appropriate icon based on user type
+              if ($usertype == 'client') {
+                echo '<button class="action-btn" onclick="location.href=\'Client/clientDashboard.php\'">
+                    <ion-icon name="settings-outline"></ion-icon>
+                  </button>';
+              } elseif ($usertype == 'admin') {
+                echo '<button class="action-btn" onclick="location.href=\'Admin/adminDashboard.php\'">
+                    <ion-icon name="settings-outline"></ion-icon>
+                  </button>';
+              }
+            }
+          } else {
+            // User is not logged in, display default icon
+            echo '<button class="action-btn" onclick="location.href=\'authentification.php\'">
+                <ion-icon name="person-outline"></ion-icon>
+              </button>';
+          }
+          ?>
           <button class="action-btn">
             <ion-icon name="heart-outline"></ion-icon>
             <span class="count">0</span>
           </button>
-
           <button class="action-btn">
             <ion-icon name="bag-handle-outline"></ion-icon>
             <span class="count">0</span>
           </button>
-
         </div>
-
       </div>
-
     </div>
+
 
     <nav class="desktop-navigation-menu">
 
@@ -767,7 +895,7 @@
             <div class="category-content-box">
 
               <div class="category-content-flex">
-                <h3 class="category-item-title">Stage</h3>  
+                <h3 class="category-item-title">Stage</h3>
 
                 <p class="category-item-amount">(0)</p>
               </div>
@@ -880,8 +1008,7 @@
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/festival.svg" alt="clothes" width="20" height="20"
-                      class="menu-title-img">
+                    <img src="./assets/images/icons/festival.svg" alt="clothes" width="20" height="20" class="menu-title-img">
 
                     <p class="menu-title">Festival</p>
                   </div>
@@ -932,8 +1059,7 @@
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/stage.svg" alt="footwear" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/stage.svg" alt="footwear" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">Stage</p>
                   </div>
@@ -984,8 +1110,7 @@
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/Sport.svg" alt="clothes" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/Sport.svg" alt="clothes" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">Sport</p>
                   </div>
@@ -1029,8 +1154,7 @@
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/musique.svg" alt="perfume" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/musique.svg" alt="perfume" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">Music</p>
                   </div>
@@ -1081,8 +1205,7 @@
                 <button class="sidebar-accordion-menu" data-accordion-btn>
 
                   <div class="menu-title-flex">
-                    <img src="./assets/images/icons/workshop.svg" alt="cosmetics" class="menu-title-img" width="20"
-                      height="20">
+                    <img src="./assets/images/icons/workshop.svg" alt="cosmetics" class="menu-title-img" width="20" height="20">
 
                     <p class="menu-title">workshop</p>
                   </div>
@@ -1131,7 +1254,7 @@
             </ul>
 
           </div>
-<!--
+          <!--
           <div class="product-showcase">
 
             <h3 class="showcase-heading">best sellers</h3>
@@ -1270,7 +1393,7 @@
         <div class="product-box">
 
           <!--
-            - PRODUCT MINIMAL
+            - EVENTS
           -->
 
           <div class="product-minimal">
@@ -1282,631 +1405,43 @@
               <div class="showcase-wrapper has-scrollbar">
 
                 <div class="showcase-container">
+                  <?php
+                  include 'connection.php';
 
-                  <div class="showcase">
+                  $sql = "SELECT * FROM event";
+                  $result = $conn->query($sql);
 
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/clothes-1.jpg" alt="relaxed short full sleeve t-shirt"
-                        width="70" class="showcase-img">
-                    </a>
 
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Relaxed Short full Sleeve T-Shirt</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Clothes</a>
-
-                      <div class="price-box">
-                        <p class="price">$45.00</p>
-                        <del>$12.00</del>
+                  if ($result->num_rows > 0) {
+                    while ($row = $result->fetch_assoc()) {
+                  ?>
+                      <div class="blog-card">
+                        <a href="#">
+                          <img src="<?php echo $row["image"]; ?>" alt="<?php echo $row["name"]; ?>" width="300" class="blog-banner">
+                        </a>
+                        <div class="blog-content">
+                          <a href="#" class="blog-category"><?php echo $row["category"]; ?></a>
+                          <a href="#">
+                            <h3 class="blog-title"><?php echo $row["name"]; ?></h3>
+                          </a>
+                          <p class="blog-meta">By <cite>Admin</cite> / <time datetime="<?php echo $row["date"]; ?>"><?php echo $row["date"]; ?></time></p>
+                        </div>
                       </div>
+                      <br>
+                  <?php
+                    }
+                  } else {
+                    echo "0 results";
+                  }
 
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/clothes-2.jpg" alt="girls pink embro design top"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Girls pnk Embro design Top</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Clothes</a>
-
-                      <div class="price-box">
-                        <p class="price">$61.00</p>
-                        <del>$9.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/clothes-3.jpg" alt="black floral wrap midi skirt"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Black Floral Wrap Midi Skirt</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Clothes</a>
-
-                      <div class="price-box">
-                        <p class="price">$76.00</p>
-                        <del>$25.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shirt-1.jpg" alt="pure garment dyed cotton shirt"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Pure Garment Dyed Cotton Shirt</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Mens Fashion</a>
-
-                      <div class="price-box">
-                        <p class="price">$68.00</p>
-                        <del>$31.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
+                  // Close the database connection
+                  $conn->close();
+                  ?>
 
                 </div>
-
-                <div class="showcase-container">
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jacket-5.jpg" alt="men yarn fleece full-zip jacket"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">MEN Yarn Fleece Full-Zip Jacket</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Winter wear</a>
-
-                      <div class="price-box">
-                        <p class="price">$61.00</p>
-                        <del>$11.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jacket-1.jpg" alt="mens winter leathers jackets"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Mens Winter Leathers Jackets</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Winter wear</a>
-
-                      <div class="price-box">
-                        <p class="price">$32.00</p>
-                        <del>$20.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jacket-3.jpg" alt="mens winter leathers jackets"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Mens Winter Leathers Jackets</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Jackets</a>
-
-                      <div class="price-box">
-                        <p class="price">$50.00</p>
-                        <del>$25.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shorts-1.jpg" alt="better basics french terry sweatshorts"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Better Basics French Terry Sweatshorts</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Shorts</a>
-
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$10.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
               </div>
-
             </div>
-
-            <div class="product-showcase">
-
-              <h2 class="title">Trending</h2>
-
-              <div class="showcase-wrapper  has-scrollbar">
-
-                <div class="showcase-container">
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-1.jpg" alt="running & trekking shoes - white"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Running & Trekking Shoes - White</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Sports</a>
-
-                      <div class="price-box">
-                        <p class="price">$49.00</p>
-                        <del>$15.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-2.jpg" alt="trekking & running shoes - black"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Trekking & Running Shoes - black</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Sports</a>
-
-                      <div class="price-box">
-                        <p class="price">$78.00</p>
-                        <del>$36.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/party-wear-1.jpg" alt="womens party wear shoes"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Womens Party Wear Shoes</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Party wear</a>
-
-                      <div class="price-box">
-                        <p class="price">$94.00</p>
-                        <del>$42.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-3.jpg" alt="sports claw Spectacle shoes"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Sports Claw Spectacle Shoes</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Sports</a>
-
-                      <div class="price-box">
-                        <p class="price">$54.00</p>
-                        <del>$65.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div class="showcase-container">
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/sports-6.jpg" alt="air tekking shoes - white"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Air Trekking Shoes - white</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Sports</a>
-
-                      <div class="price-box">
-                        <p class="price">$52.00</p>
-                        <del>$55.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shoe-3.jpg" alt="Boot With Suede Detail" class="showcase-img"
-                        width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Boot With Suede Detail</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">boots</a>
-
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$30.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shoe-1.jpg" alt="Clubbing leather formal wear shoes"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Clubbing Leather Formal Wear shoes</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">formal</a>
-
-                      <div class="price-box">
-                        <p class="price">$56.00</p>
-                        <del>$78.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shoe-2.jpg" alt="casual Clubbing brown shoes"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Casual Clubbing Brown shoes</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Casual</a>
-
-                      <div class="price-box">
-                        <p class="price">$50.00</p>
-                        <del>$55.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
-            <div class="product-showcase">
-
-              <h2 class="title">Top Rated</h2>
-
-              <div class="showcase-wrapper  has-scrollbar">
-
-                <div class="showcase-container">
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/watch-3.jpg" alt="pocket watch leather pouch"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Pocket Watch Leather Pouch</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Watches</a>
-
-                      <div class="price-box">
-                        <p class="price">$50.00</p>
-                        <del>$34.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jewellery-3.jpg" alt="silver deer heart necklace"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Silver Deer Heart Necklace</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Jewellery</a>
-
-                      <div class="price-box">
-                        <p class="price">$84.00</p>
-                        <del>$30.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/perfume.jpg" alt="titan 100 ml womens perfume"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Titan 100 Ml Womens Perfume</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Siccajazz Festival</a>
-
-                      <div class="price-box">
-                        <p class="price">$42.00</p>
-                        <del>$10.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/belt.jpg" alt="Clubbing leather reversible belt"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Clubbing Leather Reversible Belt</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Belt</a>
-
-                      <div class="price-box">
-                        <p class="price">$24.00</p>
-                        <del>$10.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-                <div class="showcase-container">
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jewellery-2.jpg" alt="platinum zircon classic ring"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">platinum Zircon Classic Ring</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">jewellery</a>
-
-                      <div class="price-box">
-                        <p class="price">$62.00</p>
-                        <del>$65.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/watch-1.jpg" alt="smart watche vital plus" class="showcase-img"
-                        width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Smart watche Vital Plus</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">Watches</a>
-
-                      <div class="price-box">
-                        <p class="price">$56.00</p>
-                        <del>$78.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/shampoo.jpg" alt="shampoo conditioner packs"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">shampoo conditioner packs</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">cosmetics</a>
-
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$30.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                  <div class="showcase">
-
-                    <a href="#" class="showcase-img-box">
-                      <img src="./assets/images/products/jewellery-1.jpg" alt="rose gold peacock earrings"
-                        class="showcase-img" width="70">
-                    </a>
-
-                    <div class="showcase-content">
-
-                      <a href="#">
-                        <h4 class="showcase-title">Rose Gold Peacock Earrings</h4>
-                      </a>
-
-                      <a href="#" class="showcase-category">jewellery</a>
-
-                      <div class="price-box">
-                        <p class="price">$20.00</p>
-                        <del>$30.00</del>
-                      </div>
-
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-            </div>
-
           </div>
-
 
 
           <!--
@@ -1924,8 +1459,7 @@
                 <div class="showcase">
 
                   <div class="showcase-banner">
-                    <img src="./assets/images/products/shampoo.jpg" alt="shampoo, conditioner & facewash packs"
-                      class="showcase-img">
+                    <img src="./assets/images/products/shampoo.jpg" alt="shampoo, conditioner & facewash packs" class="showcase-img">
                   </div>
 
                   <div class="showcase-content">
@@ -2011,8 +1545,7 @@
                 <div class="showcase">
 
                   <div class="showcase-banner">
-                    <img src="./assets/images/products/jewellery-1.jpg" alt="Rose Gold diamonds Earring"
-                      class="showcase-img">
+                    <img src="./assets/images/products/jewellery-1.jpg" alt="Rose Gold diamonds Earring" class="showcase-img">
                   </div>
 
                   <div class="showcase-content">
@@ -2105,10 +1638,8 @@
 
                 <div class="showcase-banner">
 
-                  <img src="./assets/images/products/jacket-3.jpg" alt="Mens Winter Leathers Jackets" width="300"
-                    class="product-img default">
-                  <img src="./assets/images/products/jacket-4.jpg" alt="Mens Winter Leathers Jackets" width="300"
-                    class="product-img hover">
+                  <img src="./assets/images/products/jacket-3.jpg" alt="Mens Winter Leathers Jackets" width="300" class="product-img default">
+                  <img src="./assets/images/products/jacket-4.jpg" alt="Mens Winter Leathers Jackets" width="300" class="product-img hover">
 
                   <p class="showcase-badge">15%</p>
 
@@ -2162,10 +1693,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shirt-1.jpg" alt="Pure Garment Dyed Cotton Shirt"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shirt-2.jpg" alt="Pure Garment Dyed Cotton Shirt"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shirt-1.jpg" alt="Pure Garment Dyed Cotton Shirt" class="product-img default" width="300">
+                  <img src="./assets/images/products/shirt-2.jpg" alt="Pure Garment Dyed Cotton Shirt" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2215,10 +1744,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/jacket-5.jpg" alt="MEN Yarn Fleece Full-Zip Jacket"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/jacket-6.jpg" alt="MEN Yarn Fleece Full-Zip Jacket"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/jacket-5.jpg" alt="MEN Yarn Fleece Full-Zip Jacket" class="product-img default" width="300">
+                  <img src="./assets/images/products/jacket-6.jpg" alt="MEN Yarn Fleece Full-Zip Jacket" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2266,10 +1793,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/clothes-3.jpg" alt="Black Floral Wrap Midi Skirt"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/clothes-4.jpg" alt="Black Floral Wrap Midi Skirt"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/clothes-3.jpg" alt="Black Floral Wrap Midi Skirt" class="product-img default" width="300">
+                  <img src="./assets/images/products/clothes-4.jpg" alt="Black Floral Wrap Midi Skirt" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle pink">new</p>
 
@@ -2319,10 +1844,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shoe-2.jpg" alt="Casual Clubbing Brown shoes"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shoe-2_1.jpg" alt="Casual Clubbing Brown shoes"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shoe-2.jpg" alt="Casual Clubbing Brown shoes" class="product-img default" width="300">
+                  <img src="./assets/images/products/shoe-2_1.jpg" alt="Casual Clubbing Brown shoes" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2370,10 +1893,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/watch-3.jpg" alt="Pocket Watch Leather Pouch"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/watch-4.jpg" alt="Pocket Watch Leather Pouch"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/watch-3.jpg" alt="Pocket Watch Leather Pouch" class="product-img default" width="300">
+                  <img src="./assets/images/products/watch-4.jpg" alt="Pocket Watch Leather Pouch" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2423,10 +1944,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/watch-1.jpg" alt="Smart watche Vital Plus"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/watch-2.jpg" alt="Smart watche Vital Plus"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/watch-1.jpg" alt="Smart watche Vital Plus" class="product-img default" width="300">
+                  <img src="./assets/images/products/watch-2.jpg" alt="Smart watche Vital Plus" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2474,10 +1993,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/party-wear-1.jpg" alt="Womens Party Wear Shoes"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/party-wear-2.jpg" alt="Womens Party Wear Shoes"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/party-wear-1.jpg" alt="Womens Party Wear Shoes" class="product-img default" width="300">
+                  <img src="./assets/images/products/party-wear-2.jpg" alt="Womens Party Wear Shoes" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2527,10 +2044,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/jacket-1.jpg" alt="Mens Winter Leathers Jackets"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/jacket-2.jpg" alt="Mens Winter Leathers Jackets"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/jacket-1.jpg" alt="Mens Winter Leathers Jackets" class="product-img default" width="300">
+                  <img src="./assets/images/products/jacket-2.jpg" alt="Mens Winter Leathers Jackets" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2578,10 +2093,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/sports-2.jpg" alt="Trekking & Running Shoes - black"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/sports-4.jpg" alt="Trekking & Running Shoes - black"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/sports-2.jpg" alt="Trekking & Running Shoes - black" class="product-img default" width="300">
+                  <img src="./assets/images/products/sports-4.jpg" alt="Trekking & Running Shoes - black" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2631,10 +2144,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shoe-1.jpg" alt="Clubbing Leather Formal Wear shoes"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shoe-1_1.jpg" alt="Clubbing Leather Formal Wear shoes"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shoe-1.jpg" alt="Clubbing Leather Formal Wear shoes" class="product-img default" width="300">
+                  <img src="./assets/images/products/shoe-1_1.jpg" alt="Clubbing Leather Formal Wear shoes" class="product-img hover" width="300">
 
                   <div class="showcase-actions">
                     <button class="btn-action">
@@ -2682,10 +2193,8 @@
               <div class="showcase">
 
                 <div class="showcase-banner">
-                  <img src="./assets/images/products/shorts-1.jpg" alt="Better Basics French Terry Sweatshorts"
-                    class="product-img default" width="300">
-                  <img src="./assets/images/products/shorts-2.jpg" alt="Better Basics French Terry Sweatshorts"
-                    class="product-img hover" width="300">
+                  <img src="./assets/images/products/shorts-1.jpg" alt="Better Basics French Terry Sweatshorts" class="product-img default" width="300">
+                  <img src="./assets/images/products/shorts-2.jpg" alt="Better Basics French Terry Sweatshorts" class="product-img hover" width="300">
 
                   <p class="showcase-badge angle black">sale</p>
 
@@ -2766,8 +2275,7 @@
 
             <div class="testimonial-card">
 
-              <img src="./assets/images/me.jpg" alt="MOHAMED RAMI ZAIRI" class="testimonial-banner" width="80"
-                height="80">
+              <img src="./assets/images/me.jpg" alt="MOHAMED RAMI ZAIRI" class="testimonial-banner" width="80" height="80">
 
               <p class="testimonial-name">Zairi Mohamed Rami</p>
 
@@ -2921,8 +2429,7 @@
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives"
-                width="300" class="blog-banner">
+              <img src="./assets/images/blog-1.jpg" alt="Clothes Retail KPIs 2021 Guide for Clothes Executives" width="300" class="blog-banner">
             </a>
 
             <div class="blog-content">
@@ -2944,8 +2451,7 @@
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-2.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                class="blog-banner" width="300">
+              <img src="./assets/images/blog-2.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle." class="blog-banner" width="300">
             </a>
 
             <div class="blog-content">
@@ -2967,8 +2473,7 @@
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue."
-                class="blog-banner" width="300">
+              <img src="./assets/images/blog-3.jpg" alt="EBT vendors: Claim Your Share of SNAP Online Revenue." class="blog-banner" width="300">
             </a>
 
             <div class="blog-content">
@@ -2990,8 +2495,7 @@
           <div class="blog-card">
 
             <a href="#">
-              <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle."
-                class="blog-banner" width="300">
+              <img src="./assets/images/blog-4.jpg" alt="Curbside fashion Trends: How to Win the Pickup Battle." class="blog-banner" width="300">
             </a>
 
             <div class="blog-content">
@@ -3015,6 +2519,7 @@
       </div>
 
     </div>
+
 
   </main>
 
@@ -3316,12 +2821,10 @@
 
 
 
-
-
   <!--
     - custom js link
   -->
-  <script src="./assets/js/script.js"></script>
+  <script src="assets/js/script.js"></script>
 
   <!--
     - ionicon link
