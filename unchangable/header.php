@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/../assets/css/style-prefix.css">
+<link rel="stylesheet" href="../../assets/css/style-prefix.css">
 <div class="header-top">
     <div class="container">
         <ul class="header-social-container">
@@ -34,7 +34,7 @@
 </div>
 <div class="header-main">
     <div class="container">
-        <a href="index.html" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
+        <a href="../../index.php" style="font-family: almaz; color: black; text-decoration: none; font-size: 150%;">
             Get This Ticket
         </a>
         <div class="header-search-container">
@@ -59,14 +59,14 @@
                 <ion-icon name="settings-outline"></ion-icon>
                 </button>';
                     } elseif ($usertype == 'admin') {
-                        echo '<button class="action-btn" onclick="location.href=\'Admin/adminDashboard.php\'">
+                        echo '<button class="action-btn" onclick="location.href=\'admin/adminDashboard.php\'">
                 <ion-icon name="settings-outline"></ion-icon>
                 </button>';
                     }
                 }
             } else {
                 // User is not logged in, display default icon
-                echo '<button class="action-btn" onclick="window.location.href="../../authentification.php"">
+                echo '<button class="action-btn" onclick="window.location.href="authentification.php"">
                 <ion-icon name="person-outline"></ion-icon>
                 </button>';
             }
@@ -86,7 +86,7 @@
         function updateCartCount() {
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
             let totalCount = cart.reduce((total, item) => {
-                return total + (parseInt(item.orchestre) || 0) + (parseInt(item.balcon) || 0) + (parseInt(item.galerie) || 0);
+                return total + (parseInt(item.Qorchestre) || 0) + (parseInt(item.Qbalcon) || 0) + (parseInt(item.Qgalerie) || 0);
             }, 0);
 
             document.querySelectorAll('.action-btn .count').forEach(countElement => {
@@ -94,14 +94,51 @@
             });
         }
 
-        updateCartCount();
+        function addToCart() {
+            const productId = document.getElementById('product_id').value;
+            const productImage = <?php echo json_encode($event['image']); ?>;
+            const productName = <?php echo json_encode($event['name']); ?>;
+            const productDate = <?php echo json_encode($event['date']); ?>;
+            const productLocation = <?php echo json_encode($event['location']); ?>;
 
-        // Assuming you have a way to know when items are added to the cart,
-        // you can call updateCartCount() again after adding items.
-        // Example:
-        // document.getElementById('ticket_form_submit').addEventListener('click', function() {
-        //     // Perform actions related to adding items to cart
-        //     updateCartCount();
-        // });
+            const priceOrchestreU = <?php echo json_encode($orchestre['price']); ?>;
+            const priceBalconU = <?php echo json_encode($balcon['price']); ?>;
+            const priceGalerieU = <?php echo json_encode($galerie['price']); ?>;
+
+            const quantiteOrchestre = document.getElementById('quantite_2797').value;
+            const quantiteBalcon = document.getElementById('quantite_2798').value;
+            const quantiteGalerie = document.getElementById('quantite_2799').value;
+
+            const priceOrchestre = quantiteOrchestre * priceOrchestreU;
+            const priceBalcon = quantiteBalcon * priceBalconU;
+            const priceGalerie = quantiteGalerie * priceGalerieU;
+            const totalPrice = priceOrchestre + priceBalcon + priceGalerie;
+
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const event = {
+                id: productId,
+                image: productImage,
+                name: productName,
+                date: productDate,
+                location: productLocation,
+                Porchestre: priceOrchestreU,
+                Pbalcon: priceBalconU,
+                Pgalerie: priceGalerieU,
+                Qorchestre: quantiteOrchestre,
+                Qbalcon: quantiteBalcon,
+                Qgalerie: quantiteGalerie,
+                totalPrice: totalPrice
+            };
+
+            cart.push(event);
+            updateCartCount();
+        }
+
+        document.getElementById('ticket_form_submit').addEventListener('click', function(e) {
+            e.preventDefault();
+            addToCart();
+        });
+
+        updateCartCount();
     });
 </script>

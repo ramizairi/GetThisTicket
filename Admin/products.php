@@ -3,6 +3,7 @@ session_start();
 
 include "../connection.php";
 
+// Check if the user is logged in
 if (!isset($_SESSION['user_id'])) {
     // Redirect the user to the authentication page
     header("Location: ../authentification.php");
@@ -15,10 +16,16 @@ if (isset($_SESSION['profileImage'])) {
     // Set a default profile image URL if not set
     $profileImage = "../assets/images/image.png";
 }
+
 $user_id = $_SESSION['user_id'];
-// Fetch transactions data from your database
-$sql = "SELECT title, totalamount, date, status FROM transactions where user_id =  " . $user_id;
+
+// Fetch users data from the database
+$sql = "SELECT * FROM event";
 $result = mysqli_query($conn, $sql);
+
+if (!$result) {
+    die("Query failed: " . mysqli_error($conn));
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -182,15 +189,17 @@ $result = mysqli_query($conn, $sql);
                         <div class="col-lg-12 grid-margin stretch-card">
                             <div class="card">
                                 <div class="card-body">
-                                    <h4 class="card-title">History Table</h4>
+                                    <h4 class="card-title">Products table</h4>
+                                    <a href='add-product.php' class='btn btn-success w-100' style="color: white;">Add</a>
                                     <div class="table-responsive">
                                         <table class="table">
                                             <thead>
                                                 <tr>
-                                                    <th>Title</th>
-                                                    <th>Total Amount (dt)</th>
+                                                    <th>Event ID</th>
+                                                    <th>Event name</th>
                                                     <th>Date</th>
-                                                    <th>Status</th>
+                                                    <th>Location</th>
+                                                    <th>More Info</th> <!-- New column for "More Info" button -->
                                                 </tr>
                                             </thead>
                                             <tbody>
@@ -198,20 +207,16 @@ $result = mysqli_query($conn, $sql);
                                                 if (mysqli_num_rows($result) > 0) {
                                                     // Output data of each row
                                                     while ($row = mysqli_fetch_assoc($result)) {
-                                                        echo "<tr>";
-                                                        echo "<td>" . $row["title"] . "</td>";
-                                                        echo "<td>" . $row["totalamount"] . "</td>";
-                                                        echo "<td>" . $row["date"] . "</td>";
-                                                        if ($row["status"] == 'Membership') {
-                                                            echo "<td><label class='badge badge-info'>" . $row["status"] . "</label></td>";
-                                                        } else if ($row["status"] == 'Paied') {
-                                                            echo "<td><label class='badge badge-success'>" . $row["status"] . "</label></td>";
-                                                        }
-
-                                                        echo "</tr>";
+                                                            echo "<tr>";
+                                                            echo "<td>" . $row["id"] . "</td>";
+                                                            echo "<td>" . $row["name"] . "</td>";
+                                                            echo "<td>" . $row["date"] . "</td>";
+                                                            echo "<td>" . $row["location"] . "</td>";
+                                                            echo "<td><a href='product-detail.php?id=" . $row["id"] . "' class='btn btn-primary'>More Info</a></td>";
+                                                            echo "</tr>";
                                                     }
                                                 } else {
-                                                    echo "<tr><td colspan='4'>No transactions found</td></tr>";
+                                                    echo "<tr><td colspan='5'>No transactions found</td></tr>";
                                                 }
                                                 ?>
                                             </tbody>

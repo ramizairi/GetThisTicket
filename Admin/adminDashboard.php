@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+include "../connection.php";
+
+if (!isset($_SESSION['user_id'])) {
+  // Redirect the user to the authentication page
+  header("Location: ../authentification.php");
+  exit(); // Stop further execution
+}
+
+if (isset($_SESSION['profileImage'])) {
+  $profileImage = $_SESSION['profileImage'];
+} else {
+  // Set a default profile image URL if not set
+  $profileImage = "../assets/images/image.png";
+}
+$user_id = $_SESSION['user_id'];
+// Fetch transactions data from your database
+$sql = "SELECT title, totalamount, date, status FROM transactions";
+$result = mysqli_query($conn, $sql);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,7 +46,25 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <!-- endinject -->
   <link rel="shortcut icon" href="assets/images/favicon.png" />
+
 </head>
+
+<script>
+  $(document).ready(function() {
+    // Your WeatherAPI key
+    var apiKey = "4d517d018fea4527849220706240505";
+    // Your WeatherAPI endpoint
+    var apiUrl = "https://api.weatherapi.com/v1/current.json?key=" + apiKey + "&q=Tunis";
+
+    // Make the API request
+    $.getJSON(apiUrl, function(data) {
+      // Update HTML with weather information
+      $(".weather-info .font-weight-normal").html(data.current.temp_c + "<sup>C</sup>");
+      $(".weather-info .location").text(data.location.name);
+      $(".weather-info .font-weight-normal").next().text(data.location.region);
+    });
+  });
+</script>
 
 <body>
   <div class="container-scroller">
@@ -182,7 +223,11 @@
             <div class="col-md-12 grid-margin">
               <div class="row">
                 <div class="col-12 col-xl-8 mb-4 mb-xl-0">
-                  <h3 class="font-weight-bold">Welcome John</h3>
+                  <?php
+                  if (isset($_SESSION['username'])) {
+                    echo "<h3 class='font-weight-bold'> Welcome, " . $_SESSION['username'] . "</h3>";
+                  }
+                  ?>
                   <h6 class="font-weight-normal mb-0">All systems are running smoothly! You have <span class="text-primary">3 unread alerts!</span></h6>
                 </div>
                 <div class="col-12 col-xl-4">
@@ -210,11 +255,11 @@
                   <div class="weather-info">
                     <div class="d-flex">
                       <div>
-                        <h2 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i>31<sup>C</sup></h2>
+                        <h1 class="mb-0 font-weight-normal"><i class="icon-sun me-2"></i><span id="temp"></span></h1>
                       </div>
                       <div class="ms-2">
-                        <h4 class="location font-weight-normal">Chicago</h4>
-                        <h6 class="font-weight-normal">Illinois</h6>
+                        <h2 class="location font-weight-normal"></h2>
+                        <h3 class="font-weight-normal"></h3>
                       </div>
                     </div>
                   </div>
@@ -522,69 +567,34 @@
                     <table class="table table-striped table-borderless">
                       <thead>
                         <tr>
-                          <th>Product</th>
-                          <th>Price</th>
+                          <th>Title</th>
+                          <th>Total Amount (dt)</th>
                           <th>Date</th>
                           <th>Status</th>
                         </tr>
                       </thead>
                       <tbody>
-                        <tr>
-                          <td>Search Engine Marketing</td>
-                          <td class="font-weight-bold">$362</td>
-                          <td>21 Sep 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-success">Completed</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Search Engine Optimization</td>
-                          <td class="font-weight-bold">$116</td>
-                          <td>13 Jun 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-success">Completed</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Display Advertising</td>
-                          <td class="font-weight-bold">$551</td>
-                          <td>28 Sep 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-warning">Pending</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Pay Per Click Advertising</td>
-                          <td class="font-weight-bold">$523</td>
-                          <td>30 Jun 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-warning">Pending</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>E-Mail Marketing</td>
-                          <td class="font-weight-bold">$781</td>
-                          <td>01 Nov 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-danger">Cancelled</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Referral Marketing</td>
-                          <td class="font-weight-bold">$283</td>
-                          <td>20 Mar 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-warning">Pending</div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td>Social media marketing</td>
-                          <td class="font-weight-bold">$897</td>
-                          <td>26 Oct 2018</td>
-                          <td class="font-weight-medium">
-                            <div class="badge badge-success">Completed</div>
-                          </td>
-                        </tr>
+
+                        <?php
+                        if (mysqli_num_rows($result) > 0) {
+                          // Output data of each row
+                          while ($row = mysqli_fetch_assoc($result)) {
+                            echo "<tr>";
+                            echo "<td>" . $row["title"] . "</td>";
+                            echo "<td>" . $row["totalamount"] . "</td>";
+                            echo "<td>" . $row["date"] . "</td>";
+                            if ($row["status"] == 'Membership') {
+                              echo "<td><label class='badge badge-info'>" . $row["status"] . "</label></td>";
+                            } else if ($row["status"] == 'Paied') {
+                              echo "<td><label class='badge badge-success'>" . $row["status"] . "</label></td>";
+                            }
+
+                            echo "</tr>";
+                          }
+                        } else {
+                          echo "<tr><td colspan='4'>No transactions found</td></tr>";
+                        }
+                        ?>
                       </tbody>
                     </table>
                   </div>

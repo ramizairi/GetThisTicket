@@ -1,142 +1,65 @@
-﻿# AFD_SVM
+# Get This Ticket - E-Ticket website
+
+## Description
+"Get This Ticket" is an e-ticketing website designed to streamline the process of purchasing and managing event tickets online. The platform allows users to browse various events, select their preferred seats, and securely purchase tickets through an intuitive interface. Key features include personalized event recommendations, secure payment options, and a user-friendly dashboard for tracking ticket purchases and event details. Additionally, the website supports digital ticket delivery, ensuring that users can easily access their tickets on their mobile devices. "Get This Ticket" aims to enhance the event-going experience by providing a seamless, efficient, and enjoyable ticketing solution.
+
+## Home Page
+
+| ![1](https://github.com/ramizairi/GetThisTicker/assets/121579805/7a3176a4-1d63-4133-91cd-e69e5ebcc645) | ![2](https://github.com/ramizairi/GetThisTicker/assets/121579805/a9a062c3-9dd4-4513-bc3d-9452c9104e6a) |
+|---|---|
+| Home Page |  |
+| ![3](https://github.com/ramizairi/GetThisTicker/assets/121579805/2f0a813f-a460-4194-9daf-a98f8cd1b0ad) | ![4](https://github.com/ramizairi/GetThisTicker/assets/121579805/4dda5ec2-da14-47f3-9db5-787e5eddebd4) |
+|---|---|
+| Chat Room | Subscribe Newsletter |
+
+## S'authentifier et S'inscrire
+
+| ![1](https://github.com/ramizairi/GetThisTicker/assets/121579805/522ca475-22a0-4502-96be-4db41c38c5f5) | ![2](https://github.com/ramizairi/GetThisTicker/assets/121579805/2213f600-6410-4483-95fa-0318b7969143) |
+|---|---|
+| Sign in page | Sign up page |
+
+## Client Dashboard
+| ![1](https://github.com/ramizairi/GetThisTicker/assets/121579805/80aac290-5d76-4f1f-9d59-09ac3529089f) | ![2](https://github.com/ramizairi/GetThisTicker/assets/121579805/12c4a561-2ff0-4026-80b5-b165abbd3373) |
+|---|---|
+| Preview 1 | Preview 2 |
+| ![1](https://github.com/ramizairi/GetThisTicker/assets/121579805/c9349741-460a-4ff2-b018-81f09deb3cc9) | ![2](https://github.com/ramizairi/GetThisTicker/assets/121579805/7a7f631e-4cc8-432e-9fbe-8c6987024ae6) |
+|---|---|
+| Manage profile data | View history transactions |
+
+## Admin Dashboard
+| ![1](https://github.com/ramizairi/GetThisTicker/assets/121579805/f0bbc3b7-9380-4798-8683-905598e59b75) | ![2](https://github.com/ramizairi/GetThisTicker/assets/121579805/93219b9e-d96d-4d83-ae50-a6ff3fa533a4) |
+|---|---|
+| Preview 1 | Preview 2 |
+| ![3](https://github.com/ramizairi/GetThisTicker/assets/121579805/583e2a78-1c46-4434-bfb1-d07245d9a750) | ![4](https://github.com/ramizairi/GetThisTicker/assets/121579805/d44abbf0-7834-482b-b343-24d816ed2832) |
+|---|---|
+| Consult customers | Manage Customers |
+| ![5](https://github.com/ramizairi/GetThisTicker/assets/121579805/3d1adde8-11bd-4c0f-b64e-a7307dffc739) |  |
+|---|---|
+| Consult Orders | |
+| ![6](https://github.com/ramizairi/GetThisTicker/assets/121579805/a86edd85-a1b0-43a6-90a6-1b25dfce2123) | ![7](https://github.com/ramizairi/GetThisTicker/assets/121579805/038245fb-fb7d-4dfb-8065-8192a9124054) |
+|---|---|
+| Consult Products | Make the crud |
+| ![8](https://github.com/ramizairi/GetThisTicker/assets/121579805/1601b978-1ec4-4902-8143-53fa1bf52828) |  |
+|---|---|
+| Consult payment transactions | |
+
+## Products
 
 
 
 
 
+| ![1](https://github.com/ramizairi/GetThisTicker/assets/121579805/2cf34ee0-0b97-46f7-a5ca-55d229129257) | ![2](https://github.com/ramizairi/GetThisTicker/assets/121579805/dfd4c4e1-9dba-480e-abf5-1ad4d57096e4) |
+|---|---|
+| Preview product in the home page | Inner product preview |
+| ![3](https://github.com/ramizairi/GetThisTicker/assets/121579805/bd4d83bb-e40e-46e5-b3b5-85cfbb8136ce) | ![4](https://github.com/ramizairi/GetThisTicker/assets/121579805/4292b19f-30c9-463b-a548-7dd020aad1b9) |
+|---|---|
+| Command product | Checkout page |
+| ![5](https://github.com/ramizairi/GetThisTicker/assets/121579805/47d5a78b-c861-47c7-b6e4-6fa8e3dc828b) | ![6](https://github.com/ramizairi/GetThisTicker/assets/121579805/3032340b-983a-4c77-b027-bbca882568f6) |
+|---|---|
+| Chose the payment methode "using API" | Add your card data |
 
+# In the end...
+"Get This Ticket" provides a comprehensive solution for both event attendees and organizers, offering an efficient and user-friendly platform for purchasing and managing event tickets. By integrating secure payment options, personalized recommendations, and accessible digital ticket delivery, it aims to make the event-going experience more convenient and enjoyable.
 
-
-
-
-
-
-
-# Application mobile
-﻿<p align="center">
-  <img src="https://github.com/ramizairi/Riguelni/assets/121579805/57a4c809-c301-4d75-ac7c-c9aac5626a7b" height="170" alt="auto_route_logo">
-  <img src="https://github.com/ramizairi/Riguelni/assets/121579805/0db7fccb-3ce0-4180-a725-31a0a945ef9f" height="170" alt="auto_route_logo">
-</p
-<p align="center">
-Open source app can help you to manage your daily tasks using AI
-</p>
-
----
-
-## Preview
-
-|                                                          LOGIN INTERFACE                                                          |                                                        MANAGE TASKS EXEMPLE                                                        |                                                         CHAT WITH AI EXEMPLE                                                         |
-| :------------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------: | :-----------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src='https://github.com/ramizairi/Riguelni/assets/121579805/79b34b94-fb3b-4cc5-bee3-60499c7e4297' height='600' width='300' /> | <img src='https://github.com/ramizairi/Riguelni/assets/121579805/8966e48d-c3cb-4ef8-81b2-0761436dd723' height='600' width='300'/> | <img src='https://github.com/ramizairi/Riguelni/assets/121579805/47df8894-b4ad-4db4-ba25-047f792b6fdc' height='600' width='300'/> |
-
-# Riguelni
-
-Welcome to **Riguelni** – your personal AI-powered task manager and chatbot! Riguelni is designed to help you manage your daily tasks efficiently and interact with an AI chatbot for any inquiries. Built using React Native and Expo, Riguelni aims to provide a seamless and intuitive user experience.
-
-_______________________________________________
-## Development
-Riguelni leverages machine learning to optimize task management and provide accurate responses via the chatbot. The core AI functionality, particularly for generating daily plans, is powered by the Support Vector Machine (SVM) algorithm. Here’s an overview of how SVM is integrated into the app:
-
-🚩**Data Collection**: 
-
-  • The app collects user input related to tasks, including deadlines, priorities, and estimated durations.
-  
-🚩**Feature Extraction**: 
-
-  • Relevant features are extracted from the input data to represent each task in a structured format.
-  
-🚩**Training the SVM Model**: A dataset comprising various task management scenarios is used to train the SVM model. This training process involves:
-
-  • Defining the feature set (e.g., task priority, duration, deadline).
-  
-  • Training the SVM model to classify and rank tasks based on their importance and urgency.
-  
-🚩**Generating Plans:** 
-
-  • When the user presses the Generate Plan button, the trained SVM model processes the input tasks and generates an optimized daily plan. The model prioritizes tasks and suggests an order of execution that maximizes productivity.
-  
-🚩**Chatbot Integration:** 
-
-  • The AI chatbot is equipped with natural language processing capabilities to understand user queries and provide relevant responses. The SVM algorithm aids in understanding and classifying these queries for accurate responses.
-  
-
-## Features
-
-- **AI-Powered Task Management**: Add your tasks and let our AI generate an optimized daily plan for you.
-- **AI Chatbot**: Ask the AI chatbot anything, from general knowledge questions to specific inquiries about your tasks.
-- **User-Friendly Interface**: A clean, easy-to-navigate interface built with React Native.
-- **Cross-Platform**: Available on both iOS and Android devices.
-
-## Table of Contents
-
-- [Development](#development)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Preview](#preview)
-- [Contributing](#contributing)
-
-## Installation
-
-Follow these steps to set up Riguelni on your local machine.
-
-### Prerequisites
-
-- Node.js (>= 14.x)
-- npm or yarn
-- Expo CLI
-
-### Clone the Repository
-
-```bash
-git clone https://github.com/ramizairi/Riguelni.git
-cd Riguelni
-```
-## Install Dependencies
-
-```Using npm
-npm install
-```
-
-```Or using yarn
-yarn install
-```
-
-```Start the Expo Server
-expo start
-```
-
-## Usage
-
-### Adding Tasks
-
-  • Open the app and navigate to the Tasks section.
-  
-  • Enter your tasks for the day.
-  
-  • ress the Generate Plan button.
-  
-  • The AI will suggest an optimized daily plan based on your input.
-  
-### Chatting with the AI Chatbot
-
-  • Navigate to the Chat section.
-  
-  • Type your question or request in the input field.
-  
-  • he AI chatbot will respond with helpful information or suggestions.
-
-# Contributing
-
-## We welcome contributions from the community! To contribute to Riguelni, follow these steps:
-
-  • Fork the repository.
-  
-  • Create a new branch (git checkout -b feature-branch).
-  
-  • Make your changes and commit them (git commit -m 'Add new feature').
-  
-  • Push to the branch (git push origin feature-branch).
-  
-  • Create a pull request.
-  
+<p align="left"> <img src="https://komarev.com/ghpvc/?username=getthistickettt&label=Profile%20views&color=0e75b6&style=flat" alt="view count" /> </p>

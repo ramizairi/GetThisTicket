@@ -1,42 +1,3 @@
-<!-- checkout.php -->
-<?php
-include "../../connection.php";
-
-// Function to get event details by ID
-function getEventDetails($conn, $event_id)
-{
-    $sql = "SELECT * FROM event WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $event_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    return $result->fetch_assoc();
-}
-
-$events = [];
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['cart_data'])) {
-    $cart_data = json_decode($_POST['cart_data'], true);
-    if (json_last_error() === JSON_ERROR_NONE) {
-        foreach ($cart_data as $item) {
-            $event_id = intval($item['id']);
-            $event_details = getEventDetails($conn, $event_id);
-            if ($event_details) {
-                $event_details['quantity'] = intval($item['quantity']);
-                $events[] = $event_details;
-            }
-        }
-    } else {
-        echo "Invalid cart data.";
-        exit();
-    }
-} else {
-    echo "No cart data provided.";
-    exit();
-}
-
-$conn->close();
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -60,9 +21,6 @@ $conn->close();
     <!-- COMMON CSS -->
     <!--<link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.2/css/bootstrap.min.css" rel="stylesheet">-->
     <link href="../assets/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/css/style.css" rel="stylesheet">
-    <link href="../assets/css/vendors.css" rel="stylesheet">
-
     <!-- REVOLUTION SLIDER CSS -->
     <link rel="stylesheet" type="text/css" href="../assets/fonts/css/font-awesome.css">
     <link rel="stylesheet" type="text/css" href="../assets/css/settings.css">
@@ -169,9 +127,126 @@ $conn->close();
 </head>
 
 <body>
-
+    <?php
+    error_reporting(E_ALL);
+    ini_set('display_errors', 1);
+    include '..\..\unchangable\header.php';
+    ?>
     <!--=================================
 Header -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            function updateCartCount() {
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                let totalCount = cart.reduce((total, item) => {
+                    return total + (parseInt(item.Qorchestre) || 0) + (parseInt(item.Qbalcon) || 0) + (parseInt(item.Qgalerie) || 0);
+                }, 0);
+
+                document.querySelectorAll('.action-btn .count').forEach(countElement => {
+                    countElement.textContent = totalCount;
+                });
+            }
+
+            function updateCartTable() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const tableBody = document.querySelector('table.cart-list tbody.ui');
+                tableBody.innerHTML = ''; // Clear existing rows
+
+                cart.forEach(item => {
+                    const row = document.createElement('tr');
+
+                    const billetCell = document.createElement('td');
+                    billetCell.innerHTML = `
+                    <div class="thumb_cart">
+                        <img src="${item.image}" alt="Image">
+                    </div>
+                    <span class="item_cart"><b>${item.name}</b><br />Le ${item.date}<br />${item.location}</span>
+                `;
+                    row.appendChild(billetCell);
+
+                    const priceCell = document.createElement('td');
+                    priceCell.textContent = `${item.totalPrice} TND`;
+                    row.appendChild(priceCell);
+
+                    const feesCell = document.createElement('td');
+                    feesCell.textContent = "N/A"; // Assuming no fees, modify as needed
+                    row.appendChild(feesCell);
+
+                    const quantityCell = document.createElement('td');
+                    quantityCell.innerHTML = `
+                    Orchestre: ${item.Qorchestre} <br>
+                    Balcon: ${item.Qbalcon} <br>
+                    Galerie: ${item.Qgalerie}
+                `;
+                    row.appendChild(quantityCell);
+
+                    const totalCell = document.createElement('td');
+                    totalCell.textContent = `${item.totalPrice} TND`;
+                    row.appendChild(totalCell);
+
+                    const actionsCell = document.createElement('td');
+                    actionsCell.className = "options";
+                    actionsCell.innerHTML = `<a class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>`;
+                    row.appendChild(actionsCell);
+
+                    tableBody.appendChild(row);
+                });
+            }
+
+            function addToCart() {
+                const productId = document.getElementById('product_id').value;
+                const productImage = <?php echo json_encode($event['image']); ?>;
+                const productName = <?php echo json_encode($event['name']); ?>;
+                const productDate = <?php echo json_encode($event['date']); ?>;
+                const productLocation = <?php echo json_encode($event['location']); ?>;
+
+                const priceOrchestreU = <?php echo json_encode($orchestre['price']); ?>;
+                const priceBalconU = <?php echo json_encode($balcon['price']); ?>;
+                const priceGalerieU = <?php echo json_encode($galerie['price']); ?>;
+
+                const quantiteOrchestre = document.getElementById('quantite_2797').value;
+                const quantiteBalcon = document.getElementById('quantite_2798').value;
+                const quantiteGalerie = document.getElementById('quantite_2799').value;
+
+                const priceOrchestre = quantiteOrchestre * priceOrchestreU;
+                const priceBalcon = quantiteBalcon * priceBalconU;
+                const priceGalerie = quantiteGalerie * priceGalerieU;
+                const totalPrice = priceOrchestre + priceBalcon + priceGalerie;
+
+                let cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const event = {
+                    id: productId,
+                    image: productImage,
+                    name: productName,
+                    date: productDate,
+                    location: productLocation,
+                    Porchestre: priceOrchestreU,
+                    Pbalcon: priceBalconU,
+                    Pgalerie: priceGalerieU,
+                    Qorchestre: quantiteOrchestre,
+                    Qbalcon: quantiteBalcon,
+                    Qgalerie: quantiteGalerie,
+                    totalPrice: totalPrice
+                };
+
+                cart.push(event);
+                localStorage.setItem('cart', JSON.stringify(cart));
+
+                console.log("Item added to cart: ", event);
+                updateCartCount();
+                updateCartTable();
+            }
+
+            document.getElementById('ticket_form_submit').addEventListener('click', function(e) {
+                e.preventDefault();
+                addToCart();
+            });
+
+            updateCartCount();
+            updateCartTable();
+        });
+    </script>
+
 
     <div id="preloader">
         <div class="sk-spinner sk-spinner-wave">
@@ -187,11 +262,6 @@ Header -->
     <div class="layer"></div>
     <!-- Mobile menu overlay mask -->
 
-    <?php
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-    include '..\..\unchangable\header.php';
-    ?>
     <style>
         .cart_count_down {
             -webkit-box-pack: center;
@@ -205,7 +275,7 @@ Header -->
         }
     </style>
 
-    <section id="hero_2" class="background-image" data-background="url(https://teskerti.tn/uploads/bg/header_bg.jpg)">
+    <section id="hero_2" class="background-image" data-background="url(../../assets/images/header.jpg)">
         <div class="opacity-mask" data-opacity-mask="rgba(0, 0, 0, 0.6)">
             <div class="intro_title">
                 <h1>Passez votre commande</h1>
@@ -216,7 +286,7 @@ Header -->
                         <div class="progress">
                             <div class="progress-bar"></div>
                         </div>
-                        <a href="https://teskerti.tn/booking/checkout" class="bs-wizard-dot"></a>
+                        <a class="bs-wizard-dot"></a>
                     </div>
 
                     <div class="col-4 bs-wizard-step disabled">
@@ -224,7 +294,7 @@ Header -->
                         <div class="progress">
                             <div class="progress-bar"></div>
                         </div>
-                        <a href="https://teskerti.tn/booking/order" class="bs-wizard-dot"></a>
+                        <a class="bs-wizard-dot"></a>
                     </div>
 
                     <div class="col-4 bs-wizard-step disabled">
@@ -284,37 +354,38 @@ Header -->
                         </tr>
                     </thead>
                     <tbody class="ui">
-                        <tr id="91f84d6406e599300e29756adc369b5d">
+                        <tr>
                             <td>
                                 <div class="thumb_cart">
-                                    <img src="<?php echo htmlspecialchars($event['image']); ?>" alt="Image">
+                                    <img src="" alt="Image">
                                 </div>
-                                <span class="item_cart"><b><?php echo htmlspecialchars($event['name']); ?></b>
-                                    <br />Pass 3 Days <br />01 Août 2024 à 20:00 </span>
+                                <span class="item_cart"><b></b><br />Le<br /></span>
                             </td>
                             <td>
-                            <?php echo htmlspecialchars($event['price']); ?> </td>
-                            <td>
-                                1.500 </td>
-                            <td>
-                                <div class="numbers-row" data-id="91f84d6406e599300e29756adc369b5d">
-                                    <input type="text" value="1" class="qty2 form-control">
-                                </div>
 
                             </td>
                             <td>
-                                <strong class="total_item"><?php echo htmlspecialchars($event['price']); ?></strong>
+
+                            </td>
+                            <td>
+                                Orchestre: <br>
+                                Balcon: <br>
+                                Galerie:
+                            </td>
+                            <td>
+
                             </td>
                             <td class="options">
-                                <a data-id="91f84d6406e599300e29756adc369b5d" class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>
+                                <a class="delete-item"><i class="icon_trash"></i><i class="icon_loading animate-spin" style="display: none;"></i></a>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+
                 <!-- End col -->
                 <div class="cart-options clearfix" id="cart_coupon">
                     <div class="float-start">
-                        <form action="https://teskerti.tn/booking/checkout" id="promo-code-form" method="post" accept-charset="utf-8">
+                        <form action="checkout.php" id="promo-code-form" method="post" accept-charset="utf-8">
                             <div class="apply-coupon">
                                 <div class="form-group">
                                     <input type="text" name="coupon_code" maxlength="10" value="" placeholder="Code de réduction" class="form-control">
@@ -342,7 +413,7 @@ Header -->
                             <li class="clearfix total"><span class="col">Montant total</span><span class="col" id="total">953.000 TND</span>
                             </li>
                         </ul>
-                        <a href="https://teskerti.tn/booking/buyer" class="btn_full">Passer la commande <i class="arrow_carrot-right"></i></a>
+                        <a href="buyer.php" class="btn_full">Passer la commande <i class="arrow_carrot-right"></i></a>
                     </div>
                 </div>
 
@@ -360,17 +431,6 @@ Header -->
 
     <div id="toTop"></div><!-- Back to top button -->
 
-    <!-- Search Menu -->
-    <div class="search-overlay-menu">
-        <span class="search-overlay-close"><i class="icon_set_1_icon-77"></i></span>
-        <form action="https://teskerti.tn/search" role="search" id="searchform" method="get">
-            <input value="" name="q" type="text" placeholder="Recherche..." />
-            <button type="submit"><i class="icon_set_1_icon-78"></i>
-            </button>
-            <div style="display:none"><label>Fill This Field</label><input type="text" name="honeypot" value="" /></div>
-        </form>
-    </div><!-- End Search Menu -->
-
     <!-- Common scripts -->
     <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>-->
     <script src="../../assets/js/jquery-3.6.1.min.js"></script>
@@ -378,179 +438,34 @@ Header -->
     <script src="../../assets/js/fonctions-custom.js"></script>
 
 
-    <script type="text/javascript">
-        (function($) {
 
-            $(document).on('click', '.button_inc', function(e) {
-                var button = $(this);
-                $('.ui').addClass('loading');
-                button.attr('disabled', 'true');
-                $('#cart_feedback_messages').hide();
-                var rowid = button.closest('.numbers-row').data('id');
-                var qty = button.parent().find("input").val();
-                $.ajax({
-                    method: "put",
-                    url: "https://teskerti.tn/booking/update?rowid=" + rowid + "&qty=" + qty,
-                    success: function(data) {
-                        if (data.error === false) {
-                            if (data.total && data.total > 0) {
-                                if (data.total_subtotal) {
-                                    $('#total_subtotal').html(data.total_subtotal);
-                                }
-                                if (data.total_fee) {
-                                    $('#total_fee').html(data.total_fee);
-                                }
-                                if (data.total) {
-                                    $('#total').html(data.total);
-                                }
-                                if (data.total_item && data.total_item > 0) {
-                                    button.closest('.numbers-row').find('.total_item').html(data.total_item);
-                                    button.removeAttr('disabled');
-                                } else {
-                                    $('tr#' + rowid).hide();
-                                }
-                            } else {
-                                $('#cart_amount').html("");
-                                $('#cart_amount').hide();
-                                $('#cart_coupon').html("");
-                                $('#cart_coupon').hide();
-                                $('tr#' + rowid).hide();
-                                $('.cart-list').hide();
-                                $('#cart_feedback_messages').html("\n  <div class=\"alert alert-info\">\n Votre panier est vide.\n<\/div>\n");
-                                $('#cart_feedback_messages').fadeIn('slow');
-                            }
-                        }
-                        if (data.total_item) {
-                            $('tr#' + rowid).find('.total_item').html(data.total_item)
-                        }
-                        if (data.qty_item) {
-                            $('tr#' + rowid).find('.qty2').val(data.qty_item)
-                        }
-                        if (data.message) {
-                            $('#cart_feedback_messages').html(data.message);
-                            $('#cart_feedback_messages').fadeIn('slow');
-                        }
-                    },
-                    error: function() {
-                        $('#cart_feedback_messages').html("\n  <div class=\"alert alert-danger\">\n Nous sommes désolé, votre demande n'a pas été envoyé en raison d'un problème technique.\n<\/div>\n");
-                        $('#cart_feedback_messages').fadeIn('slow');
-                    },
-                    complete: function() {
-                        updateItemCount();
-                        updateCartContent();
-                        $('.ui').removeClass('loading');
-                    }
-                });
-                e.preventDefault();
-                return false;
-            });
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            // Function to send cart data to the server
+            function sendCartDataToServer() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
 
-            $(document).on('click', '.delete-item', function(e) {
-                $('.ui').addClass('loading');
-                $('#cart_feedback_messages').hide();
-                var rowid = $(this).data('id');
-                var item = $(this);
-                $(this).find('.icon-trash').hide();
-                $(this).find('.icon_loading').show();
-                $.ajax({
-                    method: "delete",
-                    url: "https://teskerti.tn/booking/delete?rowid=" + rowid,
-                    success: function(data) {
-                        if (data.error === false) {
-                            $('tr#' + rowid).hide();
-                            if (data.total && data.total > 0) {
-                                if (data.total_subtotal) {
-                                    $('#total_subtotal').html(data.total_subtotal);
-                                }
-                                if (data.total_fee) {
-                                    $('#total_fee').html(data.total_fee);
-                                }
-                                if (data.total) {
-                                    $('#total').html(data.total);
-                                }
-                            } else {
-                                $('#cart_amount').html("");
-                                $('#cart_amount').hide();
-                                $('#cart_coupon').html("");
-                                $('#cart_coupon').hide();
-                                $('.cart-list').hide();
-                                $('#cart_feedback_messages').html("\n  <div class=\"alert alert-info\">\n Votre panier est vide.\n<\/div>\n");
-                                $('#cart_feedback_messages').fadeIn('slow');
-                            }
-                        }
-                        if (data.message) {
-                            $('#cart_feedback_messages').html(data.message);
-                            $('#cart_feedback_messages').fadeIn('slow');
-                        }
-                    },
-                    error: function() {
-                        $('#cart_feedback_messages').html("\n  <div class=\"alert alert-danger\">\n Nous sommes désolé, votre demande n'a pas été envoyé en raison d'un problème technique.\n<\/div>\n");
-                        $('#cart_feedback_messages').fadeIn('slow');
-                    },
-                    complete: function() {
-                        updateItemCount();
-                        updateCartContent();
-                        $('.ui').removeClass('loading');
-                    }
-                });
-                e.preventDefault();
-                return false;
-            });
-
-            function promo_code_submit_state() {
-                $('#promo_code_submit').attr('disabled', 'disabled');
-                $('#promo_code_submit_icon').hide();
-                $('#promo_code_error_flag').hide();
-                $('#promo_code_validate_command').hide();
-                $('#promo_code_feedback_messages').hide();
-                $('#promo_code_processing').show();
+                fetch('checkout.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            cart_data: cart
+                        })
+                    })
+                    .then(response => response.text())
+                    .then(data => {
+                        document.querySelector('#checkout-details').innerHTML = data;
+                    })
+                    .catch(error => console.error('Error:', error));
             }
 
-            function promo_code_success_state(message) {
-                $('#promo_code_processing').hide();
-                $('#promo_code_error_flag').hide();
-                $('#promo_code_submit_icon').show();
-                $('#promo_code_validate_command').show();
-                $('#promo_code_submit').removeAttr('disabled');
-                $('#promo_code_feedback_messages').html(message);
-                $('#promo_code_feedback_messages').fadeIn('slow');
-            }
-
-            function promo_code_error_state(message) {
-                $('#promo_code_processing').hide();
-                $('#promo_code_submit_icon').hide();
-                $('#promo_code_validate_command').hide();
-                $('#promo_code_error_flag').show();
-                $('#promo_code_submit').removeAttr('disabled');
-                $('#promo_code_feedback_messages').html(message);
-                $('#promo_code_feedback_messages').fadeIn('slow');
-            }
-
-            $(document).on('click', '#promo_code_submit', function(e) {
-                promo_code_submit_state();
-                $('.ui').addClass('loading');
-                $.ajax({
-                    method: "post",
-                    url: "promo.php",
-                    data: $('#promo-code-form').serialize(),
-                    success: function(data) {
-                        if (data.error === false) {
-                            location.reload();
-                        } else {
-                            promo_code_error_state(data.message);
-                            $('.ui').removeClass('loading');
-                        }
-                    },
-                    complete: function() {
-                        $('.ui').removeClass('loading');
-                    }
-                });
-                e.preventDefault();
-                return false;
-            });
-
-        })(window.jQuery);
+            // Call the function to send cart data when the page loads
+            sendCartDataToServer();
+        });
     </script>
+
 
 </body>
 

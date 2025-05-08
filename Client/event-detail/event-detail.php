@@ -173,7 +173,7 @@ Header -->
                     </div>
                     <div class="col-md-4">
                         <div id="price_single_main">
-                            A partir de <span><?php echo htmlspecialchars($event['orchestre']); ?><sup>TND</sup></span>
+                            A partir de <span><?php echo htmlspecialchars($orchestre['price']); ?><sup>TND</sup></span>
                         </div>
                     </div>
                 </div>
@@ -385,26 +385,57 @@ Header -->
             }
 
             $(document).on('click', '#ticket_form_submit', function(e) {
+                e.preventDefault(); // Prevent default form submission
                 ticket_form_submit_state();
 
-                // Get product ID and quantities
                 const productId = $('#product_id').val();
+                const productImage = <?php echo json_encode($event['image']); ?>;
+                const productName = <?php echo json_encode($event['name']); ?>;
+                const productDate = <?php echo json_encode($event['date']); ?>;
+                const productLocation = <?php echo json_encode($event['location']); ?>;
+
+                const priceOrchestreU = <?php echo json_encode($orchestre['price']); ?>;
+                const priceBalconU = <?php echo json_encode($balcon['price']); ?>;
+                const priceGalerieU = <?php echo json_encode($galerie['price']); ?>;
+
                 const quantiteOrchestre = $('#quantite_2797').val();
                 const quantiteBalcon = $('#quantite_2798').val();
                 const quantiteGalerie = $('#quantite_2799').val();
+
+                const priceOrchestre = quantiteOrchestre * priceOrchestreU;
+                const priceBalcon = quantiteBalcon * priceBalconU;
+                const priceGalerie = quantiteGalerie * priceGalerieU;
+                const totalPrice = priceOrchestre + priceBalcon + priceGalerie;
 
                 // Create cart object
                 let cart = JSON.parse(localStorage.getItem('cart')) || [];
                 const event = {
                     id: productId,
-                    orchestre: quantiteOrchestre,
-                    balcon: quantiteBalcon,
-                    galerie: quantiteGalerie
+                    image: productImage,
+                    name: productName,
+                    date: productDate,
+                    location: productLocation,
+                    Porchestre: priceOrchestreU,
+                    Pbalcon: priceBalconU,
+                    Pgalerie: priceGalerieU,
+                    Qorchestre: quantiteOrchestre,
+                    Qbalcon: quantiteBalcon,
+                    Qgalerie: quantiteGalerie,
+                    totalPrice: totalPrice
                 };
 
-                // Add event to cart
+                // Add the event to the cart
                 cart.push(event);
+
+                // Save the cart back to local storage
                 localStorage.setItem('cart', JSON.stringify(cart));
+
+                // Log the event and total price for debugging purposes
+                console.log(event);
+                console.log("Total Price: " + totalPrice);
+
+                // Simulate successful AJAX request
+                ticket_form_success_state("Event added to cart successfully!");
 
                 // Handle form submission via AJAX
                 $.ajax({
@@ -468,9 +499,6 @@ Header -->
                         updateCartContent();
                     }
                 });
-
-                e.preventDefault();
-                return false;
             });
 
             $(document).on('click', '#ticket_form_validate_command', function(e) {
@@ -491,6 +519,7 @@ Header -->
             });
         })(window.jQuery);
     </script>
+
 
 
 
