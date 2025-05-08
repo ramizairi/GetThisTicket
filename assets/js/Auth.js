@@ -11,8 +11,6 @@ sign_in_btn.addEventListener('click', () => {
 });
 
 
-
-
 const firebaseConfig = {
     apiKey: "AIzaSyCUm6bKm6MePoL8bNesUZwIco1iIpGIxNU",
     authDomain: "getthisticket.firebaseapp.com",

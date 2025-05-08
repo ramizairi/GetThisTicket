@@ -590,6 +590,13 @@ body::-webkit-scrollbar-thumb:hover { background: hsl(0, 0%, 70%); }
   padding: 10px;
 }
 
+.mobile-bottom-navigation .action-btn-1 {
+  position: relative;
+  font-size: 26px;
+  color: var(--eerie-black);
+  padding: 10px;
+}
+
 .mobile-bottom-navigation .count {
   background: var(--bittersweet);
   color: var(--white);
@@ -2673,6 +2680,13 @@ footer {
     padding: 5px;
   }
 
+  .header-user-actions .action-btn-1 {
+    position: relative;
+    font-size: 35px;
+    color: var(--onyx);
+    padding: 5px;
+  }
+
   .header-user-actions .count {
     position: absolute;
     top: -2px;
@@ -3034,7 +3048,7 @@ footer {
 
   .footer-bottom { margin-bottom: 0; }
 
-}
+
 
 
 
@@ -3154,7 +3168,7 @@ footer {
 
   .footer-nav { padding-bottom: 50px; }
 
-}
+
 
 
 
