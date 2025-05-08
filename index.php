@@ -21,7 +21,7 @@ include "connection.php";
   <!--
     - custom css link
   -->
-  <link rel="stylesheet" href="./assets/css/style-prefix.css">
+  <link rel="stylesheet" href="assets/css/style-prefix.css">
 
   <!--
     - google font link
@@ -2429,6 +2429,7 @@ include "connection.php";
 
     </div>
 
+
   </main>
 
 
@@ -2448,12 +2449,10 @@ include "connection.php";
 
 
 
-
-
   <!--
     - custom js link
   -->
-  <script src="./assets/js/script.js"></script>
+  <script src="assets/js/script.js"></script>
 
   <!--
     - ionicon link
